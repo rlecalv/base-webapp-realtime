@@ -3,12 +3,23 @@ FROM node:18-alpine
 # Créer le répertoire de l'application
 WORKDIR /app
 
-# Installer les dépendances système nécessaires
+# Installer les dépendances système nécessaires pour Node.js et Puppeteer
 RUN apk add --no-cache \
     python3 \
     make \
     g++ \
+    chromium \
+    nss \
+    freetype \
+    freetype-dev \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
     && ln -sf python3 /usr/bin/python
+
+# Variables d'environnement pour Puppeteer
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Copier les fichiers de dépendances
 COPY package*.json ./
@@ -18,6 +29,9 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copier le code source
 COPY . .
+
+# Créer le répertoire d'exports
+RUN mkdir -p /app/exports
 
 # Créer un utilisateur non-root pour la sécurité
 RUN addgroup -g 1001 -S nodejs && \

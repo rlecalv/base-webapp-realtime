@@ -28,7 +28,11 @@
     "express-validator": "^7.0.1",
     "morgan": "^1.10.0",
     "compression": "^1.7.4",
-    "cookie-parser": "^1.4.6"
+    "cookie-parser": "^1.4.6",
+    "puppeteer": "^21.5.2",
+    "xlsx": "^0.18.5",
+    "csv-writer": "^1.6.0",
+    "moment": "^2.29.4"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",

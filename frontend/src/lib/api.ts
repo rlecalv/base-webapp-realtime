@@ -88,6 +88,99 @@ export const messagesApi = {
   },
 };
 
+// Types pour les exports
+export interface ExportFilters {
+  dateFrom?: string;
+  dateTo?: string;
+  isActive?: boolean;
+  isAdmin?: boolean;
+  userId?: number;
+  messageType?: 'text' | 'image' | 'file' | 'system';
+}
+
+export interface ExportFormat {
+  key: string;
+  name: string;
+  description: string;
+  mimeType: string;
+}
+
+// API des exports
+export const exportsApi = {
+  // Obtenir les formats d'export disponibles
+  getFormats: async (): Promise<{ formats: ExportFormat[] }> => {
+    const response = await api.get('/exports/formats');
+    return response.data;
+  },
+
+  // Export des utilisateurs
+  exportUsers: async (format: string = 'excel', filters: ExportFilters = {}): Promise<Blob> => {
+    const params = new URLSearchParams();
+    params.append('format', format);
+    
+    if (filters.dateFrom) params.append('dateFrom', filters.dateFrom);
+    if (filters.dateTo) params.append('dateTo', filters.dateTo);
+    if (filters.isActive !== undefined) params.append('isActive', filters.isActive.toString());
+    if (filters.isAdmin !== undefined) params.append('isAdmin', filters.isAdmin.toString());
+
+    const response = await api.get(`/exports/users?${params.toString()}`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Export des messages
+  exportMessages: async (format: string = 'excel', filters: ExportFilters = {}): Promise<Blob> => {
+    const params = new URLSearchParams();
+    params.append('format', format);
+    
+    if (filters.dateFrom) params.append('dateFrom', filters.dateFrom);
+    if (filters.dateTo) params.append('dateTo', filters.dateTo);
+    if (filters.userId) params.append('userId', filters.userId.toString());
+    if (filters.messageType) params.append('messageType', filters.messageType);
+
+    const response = await api.get(`/exports/messages?${params.toString()}`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Export des statistiques
+  exportStatistics: async (format: string = 'pdf'): Promise<Blob> => {
+    const response = await api.get(`/exports/statistics?format=${format}`, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Export personnalisé
+  exportCustom: async (data: any, format: string, template?: string, filename?: string): Promise<Blob> => {
+    const payload = {
+      data,
+      format,
+      template,
+      filename,
+    };
+
+    const response = await api.post('/exports/custom', payload, {
+      responseType: 'blob',
+    });
+    return response.data;
+  },
+
+  // Vérifier l'état du service d'export
+  checkHealth: async (): Promise<{ status: any }> => {
+    const response = await api.get('/exports/health');
+    return response.data;
+  },
+
+  // Nettoyer les anciens fichiers d'export
+  cleanup: async (days: number = 7): Promise<{ message: string }> => {
+    const response = await api.delete(`/exports/cleanup?days=${days}`);
+    return response.data;
+  },
+};
+
 // Utilitaires
 export const setAuthToken = (token: string) => {
   Cookies.set('auth_token', token, { expires: 7, secure: true, sameSite: 'strict' });

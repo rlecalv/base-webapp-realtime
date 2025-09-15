@@ -63,6 +63,57 @@ import { SidebarLayout } from '@/components/ui/SidebarLayout';
 - Support du mode sombre
 - Overlay mobile avec animations
 
+#### MultiColumnLayout
+Layouts multi-colonnes avancés pour applications complexes (email, gestion de projet, etc.).
+
+```tsx
+import { MultiColumnLayout, EmailLayout, DashboardLayout, ProjectManagementLayout } from '@/components/ui/MultiColumnLayout';
+
+// Layout 3 colonnes pleine largeur (type email)
+<EmailLayout
+  navigation={emailNavigation}
+  teams={teams}
+  user={user}
+  title="Messagerie"
+  secondaryColumn={<EmailList />}
+>
+  <EmailContent />
+</EmailLayout>
+
+// Layout dashboard avec contraintes
+<DashboardLayout
+  navigation={navigation}
+  user={user}
+  title="Dashboard"
+  secondaryColumn={<Sidebar />}
+>
+  <MainContent />
+</DashboardLayout>
+
+// Layout gestion de projet avec sidebar étroite
+<ProjectManagementLayout
+  navigation={navigation}
+  user={user}
+  title="Projet"
+  secondaryColumn={<ProjectSidebar />}
+>
+  <ProjectContent />
+</ProjectManagementLayout>
+```
+
+**Variantes disponibles :**
+- `full-width-three` : 3 colonnes pleine largeur (sidebar + contenu + panel secondaire)
+- `constrained-three` : 3 colonnes avec contraintes de largeur
+- `narrow-sidebar` : Sidebar étroite avec icônes uniquement
+- `constrained-sticky` : Colonnes collantes avec scroll indépendant
+- `full-width-secondary-right` : 2 colonnes avec panel secondaire à droite
+- `narrow-sidebar-header` : Sidebar étroite avec header fixe
+
+**Cas d'usage :**
+- **EmailLayout** : Applications de messagerie, clients email
+- **DashboardLayout** : Tableaux de bord, analytics
+- **ProjectManagementLayout** : Gestion de projet, outils collaboratifs
+
 ### 📝 Formulaires
 
 #### FormInput
@@ -270,8 +321,9 @@ import { Card } from '@/components/ui/Card';
 </Card>
 ```
 
-## 🚀 Exemple d'utilisation complète
+## 🚀 Exemples d'utilisation complète
 
+### Composants UI de base
 Voir le composant `ExampleUsage.tsx` pour un exemple complet d'utilisation de tous les composants ensemble.
 
 ```tsx
@@ -281,6 +333,19 @@ export default function DemoPage() {
   return <ExampleUsage />;
 }
 ```
+
+### Layouts multi-colonnes
+Voir le composant `MultiColumnExample.tsx` pour des exemples d'applications complètes avec différents layouts.
+
+```tsx
+import { MultiColumnExample } from '@/components/MultiColumnExample';
+
+export default function LayoutsDemo() {
+  return <MultiColumnExample />;
+}
+```
+
+**Accès direct :** Visitez `/layouts` pour voir la démonstration interactive des layouts.
 
 ## 🎨 Personnalisation
 

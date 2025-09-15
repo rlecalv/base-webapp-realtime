@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserManagement } from '@/components/UserManagement';
 import { Button } from '@/components/ui/Button';
+import { ExportButton } from '@/components/ExportButton';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function AdminPage() {
@@ -60,6 +61,18 @@ export default function AdminPage() {
             </div>
             
             <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <ExportButton 
+                  exportType="users" 
+                  variant="outline"
+                  size="sm"
+                />
+                <ExportButton 
+                  exportType="statistics" 
+                  variant="outline"
+                  size="sm"
+                />
+              </div>
               <span className="text-sm text-gray-700 dark:text-gray-300">
                 Connecté en tant que <strong>{user?.username}</strong>
               </span>

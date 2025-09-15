@@ -106,3 +106,53 @@ export function throttle<T extends (...args: any[]) => any>(
     }
   };
 }
+
+// Utilitaires pour les exports
+export function downloadBlob(blob: Blob, filename: string): void {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+}
+
+export function getFileExtension(format: string): string {
+  const extensions: Record<string, string> = {
+    pdf: 'pdf',
+    excel: 'xlsx',
+    csv: 'csv',
+  };
+  return extensions[format] || 'txt';
+}
+
+export function generateExportFilename(type: string, format: string, date?: Date): string {
+  const timestamp = (date || new Date()).toISOString().split('T')[0];
+  const extension = getFileExtension(format);
+  return `${type}_${timestamp}.${extension}`;
+}
+
+export function formatDateForAPI(date: Date): string {
+  return date.toISOString();
+}
+
+export function validateExportFilters(filters: any): string[] {
+  const errors: string[] = [];
+  
+  if (filters.dateFrom && filters.dateTo) {
+    const from = new Date(filters.dateFrom);
+    const to = new Date(filters.dateTo);
+    
+    if (from > to) {
+      errors.push('La date de début doit être antérieure à la date de fin');
+    }
+  }
+  
+  if (filters.userId && (!Number.isInteger(filters.userId) || filters.userId <= 0)) {
+    errors.push('L\'ID utilisateur doit être un nombre entier positif');
+  }
+  
+  return errors;
+}

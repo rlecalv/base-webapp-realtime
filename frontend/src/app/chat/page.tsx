@@ -10,6 +10,7 @@ import { ChatInput } from '@/components/ChatInput';
 import { TypingIndicator } from '@/components/TypingIndicator';
 import { UserList } from '@/components/UserList';
 import { Button } from '@/components/ui/Button';
+import { ExportButton } from '@/components/ExportButton';
 import { LogOut, MessageCircle, Settings } from 'lucide-react';
 import { FormInput } from '@/components/ui/FormInput';
 import { Avatar } from '@/components/ui/Avatar';
@@ -155,6 +156,12 @@ export default function ChatPage() {
               }`}></div>
               <span>{isConnected ? 'En ligne' : 'Hors ligne'}</span>
             </div>
+            
+            <ExportButton 
+              exportType="messages" 
+              variant="outline"
+              size="sm"
+            />
             
             {user?.is_admin && (
               <Button

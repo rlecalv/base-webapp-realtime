@@ -14,6 +14,8 @@ Une base d'application web temps réel réutilisable avec Node.js/Express, React
 - **Containerisation Docker** complète
 - **Reverse proxy Traefik** avec SSL automatique
 - **Interface responsive** avec Tailwind CSS
+- **Export de données** en PDF, Excel et CSV via Puppeteer
+- **Génération de rapports** avec statistiques complètes
 
 ## 📋 Prérequis
 
@@ -157,6 +159,15 @@ docker-compose down
 - `POST /api/v1/messages` - Créer un message
 - `PUT /api/v1/messages/:id` - Modifier un message
 - `DELETE /api/v1/messages/:id` - Supprimer un message
+
+### Exports
+- `GET /api/v1/exports/formats` - Formats d'export disponibles
+- `GET /api/v1/exports/users` - Export des utilisateurs (PDF/Excel/CSV)
+- `GET /api/v1/exports/messages` - Export des messages (PDF/Excel/CSV)
+- `GET /api/v1/exports/statistics` - Export des statistiques (PDF/Excel)
+- `POST /api/v1/exports/custom` - Export personnalisé
+- `GET /api/v1/exports/health` - État du service d'export
+- `DELETE /api/v1/exports/cleanup` - Nettoyage des anciens exports
 
 ### WebSocket Events
 - `connection` - Connexion établie

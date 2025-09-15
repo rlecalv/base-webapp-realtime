@@ -15,6 +15,7 @@ const redisClient = require('./config/redis');
 // Import des routes
 const authRoutes = require('./routes/auth');
 const messageRoutes = require('./routes/messages');
+const exportRoutes = require('./routes/exports');
 
 // Créer l'application Express
 const app = express();
@@ -92,6 +93,7 @@ app.get('/health', async (req, res) => {
 // Routes API
 app.use(`/api/${config.app.apiVersion}/auth`, authRoutes);
 app.use(`/api/${config.app.apiVersion}/messages`, messageRoutes);
+app.use(`/api/${config.app.apiVersion}/exports`, exportRoutes);
 
 // Route par défaut
 app.get('/', (req, res) => {
@@ -103,6 +105,7 @@ app.get('/', (req, res) => {
       health: '/health',
       auth: `/api/${config.app.apiVersion}/auth`,
       messages: `/api/${config.app.apiVersion}/messages`,
+      exports: `/api/${config.app.apiVersion}/exports`,
       websocket: '/socket.io'
     }
   });
