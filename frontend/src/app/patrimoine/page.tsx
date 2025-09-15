@@ -118,86 +118,140 @@ export default function PatrimoinePage() {
   return (
     <PatrimoineLayout>
       <div className="container mx-auto px-4 py-8">
-      {/* En-tête */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
-          📊 Patrimoine Immobilier
-        </h1>
-        <p className="text-gray-600">
-          Gestion et suivi de votre portefeuille immobilier
-        </p>
+      {/* En-tête élégant */}
+      <div className="mb-12">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-6 shadow-lg">
+            <div className="w-8 h-8 bg-white rounded-lg opacity-90"></div>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Patrimoine Immobilier
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Gestion et suivi de votre portefeuille immobilier
+          </p>
+          <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto mt-6 rounded-full"></div>
+        </div>
       </div>
 
       {/* Indicateurs globaux */}
       {synthese && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">💵 Revenus Totaux</h3>
-            <p className="text-3xl font-bold text-green-600">
-              {formatCurrency(synthese.revenus_bruts_totaux)}
-            </p>
-            <p className="text-sm text-gray-500">par an</p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-xl hover:shadow-blue-100 transition-all duration-300">
+            <div className="p-6">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-500 rounded-bl-full opacity-10"></div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <div className="w-6 h-6 bg-white rounded-md opacity-90"></div>
+                </div>
+                <Badge className="bg-blue-100 text-blue-700 border-blue-200">Revenus</Badge>
+              </div>
+              <h3 className="text-sm font-semibold text-blue-900 mb-2">Revenus Totaux</h3>
+              <p className="text-2xl font-bold text-blue-800 mb-1">
+                {formatCurrency(synthese.revenus_bruts_totaux)}
+              </p>
+              <p className="text-sm text-blue-600">par an</p>
+            </div>
           </Card>
           
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">🏠 Valorisation</h3>
-            <p className="text-3xl font-bold text-blue-600">
-              {formatCurrency(synthese.valorisation_totale)}
-            </p>
-            <p className="text-sm text-gray-500">portefeuille total</p>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-xl hover:shadow-blue-100 transition-all duration-300">
+            <div className="p-6">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-500 rounded-bl-full opacity-10"></div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <div className="w-6 h-6 bg-white rounded-md opacity-90"></div>
+                </div>
+                <Badge className="bg-blue-100 text-blue-700 border-blue-200">Portfolio</Badge>
+              </div>
+              <h3 className="text-sm font-semibold text-blue-900 mb-2">Valorisation</h3>
+              <p className="text-2xl font-bold text-blue-800 mb-1">
+                {formatCurrency(synthese.valorisation_totale)}
+              </p>
+              <p className="text-sm text-blue-600">portefeuille total</p>
+            </div>
           </Card>
           
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">🏦 Dettes</h3>
-            <p className="text-3xl font-bold text-red-600">
-              {formatCurrency(synthese.dettes_totales)}
-            </p>
-            <p className="text-sm text-gray-500">capital restant dû</p>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-xl hover:shadow-blue-100 transition-all duration-300">
+            <div className="p-6">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-500 rounded-bl-full opacity-10"></div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <div className="w-6 h-6 bg-white rounded-md opacity-90"></div>
+                </div>
+                <Badge className="bg-red-100 text-red-700 border-red-200">Dettes</Badge>
+              </div>
+              <h3 className="text-sm font-semibold text-blue-900 mb-2">Dettes</h3>
+              <p className="text-2xl font-bold text-red-700 mb-1">
+                {formatCurrency(synthese.dettes_totales)}
+              </p>
+              <p className="text-sm text-blue-600">capital restant dû</p>
+            </div>
           </Card>
           
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">📈 Endettement</h3>
-            <p className="text-3xl font-bold text-orange-600">
-              {formatPercentage(synthese.ratio_endettement_global)}
-            </p>
-            <p className="text-sm text-gray-500">ratio LTV</p>
+          <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-xl hover:shadow-blue-100 transition-all duration-300">
+            <div className="p-6">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-500 rounded-bl-full opacity-10"></div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <div className="w-6 h-6 bg-white rounded-md opacity-90"></div>
+                </div>
+                <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200">LTV</Badge>
+              </div>
+              <h3 className="text-sm font-semibold text-blue-900 mb-2">Endettement</h3>
+              <p className="text-2xl font-bold text-yellow-700 mb-1">
+                {formatPercentage(synthese.ratio_endettement_global)}
+              </p>
+              <p className="text-sm text-blue-600">ratio LTV</p>
+            </div>
           </Card>
         </div>
       )}
 
       {/* Actions */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          ➕ Nouvel Actif
+      <div className="flex flex-wrap gap-4 mb-8">
+        <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+          <div className="w-4 h-4 bg-white rounded-sm opacity-90 mr-2"></div>
+          Nouvel Actif
         </Button>
-        <Button variant="outline">
-          👥 Gestion Locataires
+        <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+          <div className="w-4 h-4 bg-blue-500 rounded-sm opacity-90 mr-2"></div>
+          Gestion Locataires
         </Button>
-        <Button variant="outline">
-          🏢 Gestion Sociétés
+        <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+          <div className="w-4 h-4 bg-blue-500 rounded-sm opacity-90 mr-2"></div>
+          Gestion Sociétés
         </Button>
-        <Button variant="outline">
-          🏦 Gestion Dettes
+        <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+          <div className="w-4 h-4 bg-blue-500 rounded-sm opacity-90 mr-2"></div>
+          Gestion Dettes
         </Button>
       </div>
 
       {/* Liste des actifs */}
-      <Card className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">
-            🏢 Actifs Immobiliers ({actifs.length})
-          </h2>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              📊 Exporter
-            </Button>
-            <Button variant="outline" size="sm">
-              🔍 Filtrer
-            </Button>
+      <Card className="bg-gradient-to-br from-blue-50 to-white border-blue-200">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <div className="w-6 h-6 bg-white rounded-md opacity-90"></div>
+              </div>
+              <h2 className="text-2xl font-bold text-blue-900">
+                Actifs Immobiliers ({actifs.length})
+              </h2>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+                <div className="w-3 h-3 bg-blue-500 rounded-sm opacity-90 mr-2"></div>
+                Exporter
+              </Button>
+              <Button variant="outline" size="sm" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+                <div className="w-3 h-3 bg-blue-500 rounded-sm opacity-90 mr-2"></div>
+                Filtrer
+              </Button>
+            </div>
           </div>
-        </div>
 
-        <div className="overflow-x-auto">
+          <div className="overflow-x-auto">
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-100">

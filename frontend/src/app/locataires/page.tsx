@@ -5,6 +5,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ActionButton } from '@/components/ui/ActionButton';
 import PatrimoineLayout from '@/components/layouts/PatrimoineLayout';
 
 interface Locataire {
@@ -84,28 +86,23 @@ export default function LocatairesPage() {
   return (
     <PatrimoineLayout>
       <div className="container mx-auto px-4 py-8">
-      {/* En-tête */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
-          👥 Gestion des Locataires
-        </h1>
-        <p className="text-gray-600">
-          Liste de vos {locataires.length} locataires et leurs contrats
-        </p>
-      </div>
+        <PageHeader 
+          title="Gestion des Locataires"
+          description={`Liste de vos ${locataires.length} locataires et leurs contrats`}
+        />
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          ➕ Nouveau Locataire
-        </Button>
-        <Button variant="outline">
-          📊 Exporter Liste
-        </Button>
-        <Button variant="outline">
-          🔍 Filtrer
-        </Button>
-      </div>
+        {/* Actions */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          <ActionButton variant="primary">
+            Nouveau Locataire
+          </ActionButton>
+          <ActionButton>
+            Exporter Liste
+          </ActionButton>
+          <ActionButton>
+            Filtrer
+          </ActionButton>
+        </div>
 
       {/* Liste des locataires */}
       <Card className="p-6">
