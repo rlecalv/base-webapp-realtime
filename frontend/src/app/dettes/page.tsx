@@ -5,6 +5,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ActionButton } from '@/components/ui/ActionButton';
 import PatrimoineLayout from '@/components/layouts/PatrimoineLayout';
 
 interface Dette {
@@ -113,15 +115,10 @@ export default function DettesPage() {
   return (
     <PatrimoineLayout>
       <div className="container mx-auto px-4 py-8">
-      {/* En-tête */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
-          🏦 Gestion des Dettes
-        </h1>
-        <p className="text-gray-600">
-          Suivi de vos {dettes.length} financements et échéances
-        </p>
-      </div>
+        <PageHeader 
+          title="Gestion des Dettes"
+          description={`Suivi de vos ${dettes.length} financements et échéances`}
+        />
 
       {/* Résumé global */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

@@ -5,6 +5,8 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ActionButton } from '@/components/ui/ActionButton';
 import PatrimoineLayout from '@/components/layouts/PatrimoineLayout';
 
 interface Societe {
@@ -93,28 +95,23 @@ export default function SocietesPage() {
   return (
     <PatrimoineLayout>
       <div className="container mx-auto px-4 py-8">
-      {/* En-tête */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">
-          🏢 Gestion des Sociétés
-        </h1>
-        <p className="text-gray-600">
-          Portfolio de vos {societes.length} sociétés propriétaires
-        </p>
-      </div>
+        <PageHeader 
+          title="Gestion des Sociétés"
+          description={`Portfolio de vos ${societes.length} sociétés propriétaires`}
+        />
 
-      {/* Actions */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          ➕ Nouvelle Société
-        </Button>
-        <Button variant="outline">
-          📊 Rapport Consolidé
-        </Button>
-        <Button variant="outline">
-          🔍 Filtrer
-        </Button>
-      </div>
+        {/* Actions */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          <ActionButton variant="primary">
+            Nouvelle Société
+          </ActionButton>
+          <ActionButton>
+            Rapport Consolidé
+          </ActionButton>
+          <ActionButton>
+            Filtrer
+          </ActionButton>
+        </div>
 
       {/* Grille des sociétés */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
