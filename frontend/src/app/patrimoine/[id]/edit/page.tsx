@@ -134,7 +134,7 @@ export default function EditActifPage() {
     }
 
     if (!formData.adresse.trim()) {
-      newErrors.adresse = 'L\'adresse est obligatoire';
+      newErrors.adresse = 'L&apos;adresse est obligatoire';
     }
 
     if (!formData.ville.trim()) {

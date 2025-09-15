@@ -197,7 +197,7 @@ export default function DetailSocietePage() {
                 <div className="font-medium">{societe.code_postal || 'Non renseigné'}</div>
               </div>
               <div>
-                <span className="text-gray-600 text-sm">Secteur d'activité :</span>
+                <span className="text-gray-600 text-sm">Secteur d&apos;activité :</span>
                 <div className="font-medium">{societe.secteur_activite || 'Non renseigné'}</div>
               </div>
             </div>
@@ -207,7 +207,7 @@ export default function DetailSocietePage() {
             <h3 className="text-lg font-semibold text-gray-700 mb-4">📈 Statistiques</h3>
             <div className="space-y-3">
               <div>
-                <span className="text-gray-600 text-sm">Nombre d'actifs :</span>
+                <span className="text-gray-600 text-sm">Nombre d&apos;actifs :</span>
                 <div className="font-medium text-blue-600">{actifs.length}</div>
               </div>
               <div>

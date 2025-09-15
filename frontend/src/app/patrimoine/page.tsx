@@ -346,6 +346,7 @@ export default function PatrimoinePage() {
             </tbody>
           </table>
         </div>
+        </div>
       </Card>
       </div>
     </PatrimoineLayout>

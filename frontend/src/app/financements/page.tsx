@@ -66,10 +66,6 @@ export default function FinancementsPage() {
     }).format(Number(value));
   };
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('fr-FR');
-  };
 
   const formatPercentage = (value: number | null | undefined) => {
     if (value === null || value === undefined || isNaN(value)) {
@@ -177,7 +173,7 @@ export default function FinancementsPage() {
             📊 Exporter
           </Button>
           <Button variant="outline">
-            📈 Tableau d'amortissement
+            📈 Tableau d&apos;amortissement
           </Button>
         </div>
 
