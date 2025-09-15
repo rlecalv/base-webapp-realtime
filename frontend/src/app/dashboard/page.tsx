@@ -449,6 +449,7 @@ export default function DashboardPage() {
           </Card>
         </Link>
       </div>
+      </div>
     </PatrimoineLayout>
   );
 }
