@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { ActionButton } from '@/components/ui/ActionButton';
 import PatrimoineLayout from '@/components/layouts/PatrimoineLayout';
 
 interface Dette {

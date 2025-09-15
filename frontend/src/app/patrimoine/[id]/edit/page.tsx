@@ -229,7 +229,7 @@ export default function EditActifPage() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              ✏️ Modifier l'Actif Immobilier
+              ✏️ Modifier l&apos;Actif Immobilier
             </h1>
             <p className="text-gray-600">Mettre à jour les informations du bien immobilier</p>
           </div>

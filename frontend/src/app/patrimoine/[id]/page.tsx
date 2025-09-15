@@ -296,7 +296,7 @@ export default function DetailPatrimoinePage() {
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-gray-600">Taux d'intérêt :</span>
+                <span className="text-gray-600">Taux d&apos;intérêt :</span>
                 <span className="font-medium">{actif.taux_interet ? Number(actif.taux_interet).toFixed(2) : '0.00'}%</span>
               </div>
               <div className="flex justify-between">

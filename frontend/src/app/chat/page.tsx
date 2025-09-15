@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useSocket } from '@/contexts/SocketContext';
 import { messagesApi } from '@/lib/api';
 import { ChatMessage, ChatInput, TypingIndicator, UserList } from '@/components/features/chat';
-import { Button, FormInput, Avatar } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { ExportButton } from '@/components/features/admin';
 import { LogOut, MessageCircle, Settings } from 'lucide-react';
 import toast from 'react-hot-toast';
