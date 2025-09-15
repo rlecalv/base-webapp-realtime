@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: base_app_db_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: base_app_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - base_app_dev_network
+
+  # Redis pour cache et queues
+  redis:
+    image: redis:7-alpine
+    container_name: base_app_redis_dev
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_dev_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - base_app_dev_network
+
+  # Backend Node.js/Express (mode développement)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: base_app_backend_dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 8000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: base_app_dev
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      JWT_SECRET: dev-secret-key-change-in-production
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - base_app_dev_network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  # Worker Bull pour les tâches asynchrones (mode développement)
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: base_app_worker_dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: base_app_dev
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+    depends_on:
+      - db
+      - redis
+    networks:
+      - base_app_dev_network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: node src/jobs/worker.js
+
+  # Adminer pour la gestion de base de données
+  adminer:
+    image: adminer:latest
+    container_name: base_app_adminer_dev
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+    networks:
+      - base_app_dev_network
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+
+networks:
+  base_app_dev_network:
+    driver: bridge
