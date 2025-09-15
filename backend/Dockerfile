@@ -25,10 +25,13 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 COPY package*.json ./
 
 # Installer les dépendances Node.js
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci && npm cache clean --force
 
 # Copier le code source
 COPY . .
+
+# Construire le projet TypeScript
+RUN npm run build
 
 # Créer le répertoire d'exports
 RUN mkdir -p /app/exports

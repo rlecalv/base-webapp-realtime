@@ -30,7 +30,7 @@
     "morgan": "^1.10.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
-    "puppeteer": "^21.5.2",
+    "puppeteer": "^24.10.2",
     "xlsx": "^0.18.5",
     "csv-writer": "^1.6.0",
     "moment": "^2.29.4"
@@ -51,7 +51,6 @@
     "@types/morgan": "^1.9.6",
     "@types/compression": "^1.7.3",
     "@types/cookie-parser": "^1.4.4",
-    "@types/joi": "^17.2.3",
     "tsconfig-paths": "^4.2.0"
   },
   "keywords": [

@@ -1,8 +1,31 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const bcrypt = require('bcryptjs');
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../config/database';
+import * as bcrypt from 'bcryptjs';
+import { UserAttributes } from '../types';
 
-const User = sequelize.define('User', {
+class User extends Model<UserAttributes> implements UserAttributes {
+  public id!: number;
+  public username!: string;
+  public email!: string;
+  public password!: string;
+  public is_active!: boolean;
+  public is_admin!: boolean;
+  public last_login?: Date;
+  public created_at!: Date;
+  public updated_at!: Date;
+
+  public async validatePassword(password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this.password);
+  }
+
+  public toJSON(): Omit<UserAttributes, 'password'> {
+    const values = { ...this.get() } as UserAttributes;
+    delete (values as any).password;
+    return values;
+  }
+}
+
+User.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -44,15 +67,16 @@ const User = sequelize.define('User', {
     type: DataTypes.DATE
   }
 }, {
+  sequelize,
   tableName: 'users',
   hooks: {
-    beforeCreate: async (user) => {
+    beforeCreate: async (user: User) => {
       if (user.password) {
         const salt = await bcrypt.genSalt(12);
         user.password = await bcrypt.hash(user.password, salt);
       }
     },
-    beforeUpdate: async (user) => {
+    beforeUpdate: async (user: User) => {
       if (user.changed('password')) {
         const salt = await bcrypt.genSalt(12);
         user.password = await bcrypt.hash(user.password, salt);
@@ -61,15 +85,4 @@ const User = sequelize.define('User', {
   }
 });
 
-// Méthodes d'instance
-User.prototype.validatePassword = async function(password) {
-  return await bcrypt.compare(password, this.password);
-};
-
-User.prototype.toJSON = function() {
-  const values = { ...this.get() };
-  delete values.password;
-  return values;
-};
-
-module.exports = User;
+export default User;

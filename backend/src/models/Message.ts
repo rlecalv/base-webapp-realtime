@@ -1,7 +1,19 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+import { DataTypes, Model } from 'sequelize';
+import sequelize from '../config/database';
+import { MessageAttributes } from '../types';
 
-const Message = sequelize.define('Message', {
+class Message extends Model<MessageAttributes> implements MessageAttributes {
+  public id!: number;
+  public content!: string;
+  public user_id!: number;
+  public message_type!: 'text' | 'image' | 'file' | 'system';
+  public is_edited!: boolean;
+  public edited_at?: Date;
+  public created_at!: Date;
+  public updated_at!: Date;
+}
+
+Message.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -34,6 +46,7 @@ const Message = sequelize.define('Message', {
     type: DataTypes.DATE
   }
 }, {
+  sequelize,
   tableName: 'messages',
   indexes: [
     {
@@ -45,4 +58,4 @@ const Message = sequelize.define('Message', {
   ]
 });
 
-module.exports = Message;
+export default Message;

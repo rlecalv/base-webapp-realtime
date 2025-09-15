@@ -1,8 +1,10 @@
-const jwt = require('jsonwebtoken');
-const { User } = require('../models');
-const config = require('../config');
+import * as jwt from 'jsonwebtoken';
+import { User } from '../models';
+import config from '../config';
+import { Request, Response, NextFunction } from 'express';
+import { AuthenticatedRequest } from '../types';
 
-const authenticateToken = async (req, res, next) => {
+const authenticateToken = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -13,7 +15,7 @@ const authenticateToken = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, config.jwt.secret);
+    const decoded = jwt.verify(token, config.jwt.secret) as { userId: number };
     const user = await User.findByPk(decoded.userId);
 
     if (!user || !user.is_active) {
@@ -32,7 +34,7 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-const requireAdmin = (req, res, next) => {
+const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   if (!req.user || !req.user.is_admin) {
     return res.status(403).json({ 
       error: 'Accès administrateur requis' 
@@ -41,7 +43,5 @@ const requireAdmin = (req, res, next) => {
   next();
 };
 
-module.exports = {
-  authenticateToken,
-  requireAdmin
-};
+export { authenticateToken, requireAdmin };
+export default authenticateToken;

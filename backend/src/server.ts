@@ -1,25 +1,25 @@
-const express = require('express');
-const http = require('http');
-const cors = require('cors');
-const helmet = require('helmet');
-const compression = require('compression');
-const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
-const rateLimit = require('express-rate-limit');
+import express from 'express';
+import { createServer } from 'http';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
 
-const config = require('./config');
-const { syncDatabase } = require('./models');
-const { initializeSocket } = require('./websocket/socketManager');
-const redisClient = require('./config/redis');
+import config from './config';
+import { syncDatabase } from './models';
+import { initializeSocket } from './websocket/socketManager';
+import redisClient from './config/redis';
 
 // Import des routes
-const authRoutes = require('./routes/auth');
-const messageRoutes = require('./routes/messages');
-const exportRoutes = require('./routes/exports');
+import authRoutes from './routes/auth';
+import messageRoutes from './routes/messages';
+import exportRoutes from './routes/exports';
 
 // Créer l'application Express
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 
 // Initialiser Socket.IO
 const io = initializeSocket(server);
@@ -67,7 +67,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/health', async (req, res) => {
   try {
     // Vérifier la connexion à la base de données
-    await require('./config/database').authenticate();
+    const { sequelize } = await import('./config/database');
+    await sequelize.authenticate();
     
     // Vérifier la connexion Redis
     await redisClient.ping();
@@ -196,4 +197,4 @@ if (require.main === module) {
   startServer();
 }
 
-module.exports = { app, server, io };
+export { app, server, io };

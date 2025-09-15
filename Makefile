@@ -3,6 +3,8 @@
 # Variables
 COMPOSE_FILE = docker-compose.yml
 COMPOSE_DEV_FILE = docker-compose.dev.yml
+COMPOSE_SECURE_FILE = docker-compose.secure.yml
+COMPOSE_MONITORING_FILE = docker-compose.monitoring.yml
 PROJECT_NAME = base_app
 
 # Commandes de développement
@@ -119,9 +121,74 @@ clean: ## Nettoyer complètement
 	docker system prune -af
 	docker volume prune -f
 
+# Commandes de sécurité
+.PHONY: setup-security
+setup-security: ## Configurer la sécurité (génération des secrets)
+	./scripts/setup-security.sh
+
+.PHONY: secure
+secure: ## Démarrer avec la configuration sécurisée
+	docker-compose -f $(COMPOSE_SECURE_FILE) up -d
+	@echo "🔒 Environnement sécurisé démarré"
+
+.PHONY: secure-stop
+secure-stop: ## Arrêter l'environnement sécurisé
+	docker-compose -f $(COMPOSE_SECURE_FILE) down
+
+# Commandes de monitoring
+.PHONY: monitoring
+monitoring: ## Démarrer le monitoring (Prometheus + Grafana)
+	docker-compose -f $(COMPOSE_MONITORING_FILE) up -d
+	@echo "📊 Monitoring démarré"
+	@echo "📈 Grafana: http://localhost:3001"
+	@echo "📊 Prometheus: http://localhost:9090"
+
+.PHONY: monitoring-stop
+monitoring-stop: ## Arrêter le monitoring
+	docker-compose -f $(COMPOSE_MONITORING_FILE) down
+
+.PHONY: full-stack
+full-stack: ## Démarrer la stack complète (app + monitoring)
+	docker-compose -f $(COMPOSE_SECURE_FILE) -f $(COMPOSE_MONITORING_FILE) up -d
+	@echo "🚀 Stack complète démarrée"
+
+# Commandes de sécurité et audit
+.PHONY: security-scan
+security-scan: ## Scanner les vulnérabilités des images Docker
+	@echo "🔍 Scan de sécurité des images..."
+	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $(PROJECT_NAME)_backend:latest || true
+	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $(PROJECT_NAME)_frontend:latest || true
+
+.PHONY: audit
+audit: ## Audit complet de la configuration
+	@echo "📋 Audit de configuration..."
+	@echo "✅ Vérification des fichiers de configuration"
+	@test -f .env && echo "✅ Fichier .env présent" || echo "❌ Fichier .env manquant"
+	@test -f docker-compose.secure.yml && echo "✅ Configuration sécurisée présente" || echo "❌ Configuration sécurisée manquante"
+	@echo "📊 Vérification des services..."
+	docker-compose -f $(COMPOSE_SECURE_FILE) config --quiet && echo "✅ Configuration Docker valide" || echo "❌ Erreur de configuration Docker"
+
 .PHONY: help
 help: ## Afficher cette aide
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+	@echo "📚 Commandes disponibles:"
+	@echo ""
+	@echo "🔧 Développement:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$' $(MAKEFILE_LIST) | grep -E '(dev|install|test|lint)' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $1, $2}'
+	@echo ""
+	@echo "🚀 Production:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$' $(MAKEFILE_LIST) | grep -E '(prod|secure|build)' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $1, $2}'
+	@echo ""
+	@echo "🗄️  Base de données:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$' $(MAKEFILE_LIST) | grep -E 'db-' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $1, $2}'
+	@echo ""
+	@echo "📊 Monitoring:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$' $(MAKEFILE_LIST) | grep -E 'monitoring' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $1, $2}'
+	@echo ""
+	@echo "🔒 Sécurité:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$' $(MAKEFILE_LIST) | grep -E '(security|audit|secure)' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $1, $2}'
+	@echo ""
+	@echo "🛠️  Utilitaires:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$' $(MAKEFILE_LIST) | grep -E '(clean|shell|ps|help)' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $1, $2}'
 
 # Par défaut, afficher l'aide
 .DEFAULT_GOAL := help

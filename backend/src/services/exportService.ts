@@ -1,7 +1,7 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
 import * as XLSX from 'xlsx';
 import { createObjectCsvWriter } from 'csv-writer';
-import * as moment from 'moment';
+import moment from 'moment';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 import { User, Message, sequelize } from '../models';
@@ -33,7 +33,7 @@ class ExportService {
   private async getBrowser(): Promise<Browser> {
     if (!this.browser) {
       this.browser = await puppeteer.launch({
-        headless: 'new',
+        headless: true,
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
@@ -88,7 +88,7 @@ class ExportService {
         success: true,
         filename,
         filepath,
-        buffer: pdfBuffer
+        buffer: Buffer.from(pdfBuffer)
       };
     } catch (error) {
       console.error('Erreur lors de l\'export PDF:', error);
