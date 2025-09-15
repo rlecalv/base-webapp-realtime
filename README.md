@@ -330,19 +330,17 @@ Pour toute question ou problème :
 
 ## 📚 Documentation Complète
 
-### Guides Développeurs
-- **[📖 Guide du Développeur](DEVELOPER_GUIDE.md)** - Règles de code, conventions, workflow
-- **[🏛️ Règles d'Architecture](ARCHITECTURE_RULES.md)** - Règles strictes de la "coquille"
-- **[🚀 Mise à jour Performance](PERFORMANCE_SECURITY_UPGRADE.md)** - Détails des améliorations
+### 🎯 Documentation Principale
+- **[📚 Documentation Complète](docs/)** - **Toute la documentation dans /docs**
+- **[📋 Index & Navigation](docs/DOCUMENTATION_INDEX.md)** - Guide de navigation
+- **[🏛️ Règles d'Architecture](docs/ARCHITECTURE_RULES.md)** - **OBLIGATOIRE** - Règles strictes
+- **[📖 Guide du Développeur](docs/DEVELOPER_GUIDE.md)** - Conventions et workflow
 
-### Configuration
+### 🔧 Configuration Technique
 - **[🔧 Variables CDN](cdn.env.example)** - Configuration CDN CloudFlare/CloudFront
 - **[🐳 Docker](docker/)** - Configurations Nginx, Traefik, pages d'erreur
 - **[📜 Scripts](scripts/)** - Automatisation build, deploy, security
-
-### Composants
-- **[🧩 Composants UI](frontend/src/components/README.md)** - Documentation des composants
-- **[📊 Structure](frontend/src/components/STRUCTURE.md)** - Organisation des composants
+- **[🧩 Composants UI](frontend/src/components/)** - Documentation des composants
 
 ## 🎯 Philosophie du Projet
 
