@@ -159,6 +159,28 @@ security-scan: ## Scanner les vulnérabilités des images Docker
 	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $(PROJECT_NAME)_backend:latest || true
 	docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image $(PROJECT_NAME)_frontend:latest || true
 
+# Commandes CDN et performance
+.PHONY: deploy-cdn
+deploy-cdn: ## Déployer et configurer le CDN
+	@echo "🌐 Déploiement CDN..."
+	./scripts/deploy-cdn.sh
+
+.PHONY: build-optimized
+build-optimized: ## Construire les images avec optimisations avancées
+	@echo "🐳 Construction optimisée des images..."
+	./scripts/docker-build.sh
+
+.PHONY: cache-stats
+cache-stats: ## Afficher les statistiques du cache Redis
+	@echo "📊 Statistiques du cache Redis..."
+	docker-compose -f $(COMPOSE_DEV_FILE) exec redis redis-cli info memory
+	docker-compose -f $(COMPOSE_DEV_FILE) exec redis redis-cli info keyspace
+
+.PHONY: cache-clear
+cache-clear: ## Vider le cache Redis
+	@echo "🧹 Vidage du cache Redis..."
+	docker-compose -f $(COMPOSE_DEV_FILE) exec redis redis-cli flushall
+
 .PHONY: audit
 audit: ## Audit complet de la configuration
 	@echo "📋 Audit de configuration..."
