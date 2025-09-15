@@ -11,6 +11,9 @@ class Message extends Model<MessageAttributes> implements MessageAttributes {
   public edited_at?: Date;
   public created_at!: Date;
   public updated_at!: Date;
+  
+  // Association
+  public user?: any;
 }
 
 Message.init({

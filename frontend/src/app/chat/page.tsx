@@ -39,8 +39,15 @@ export default function ChatPage() {
       if (isAuthenticated) {
         try {
           const response = await messagesApi.getMessages(1, 50);
-          // Les messages sont déjà dans l'ordre chronologique
-          response.messages.forEach(message => addMessage(message));
+          console.log('Messages API response:', response);
+          
+          // Vérifier que la réponse contient des messages
+          if (response && response.messages && Array.isArray(response.messages)) {
+            // Les messages sont déjà dans l'ordre chronologique
+            response.messages.forEach(message => addMessage(message));
+          } else {
+            console.warn('Format de réponse inattendu:', response);
+          }
         } catch (error) {
           console.error('Erreur lors du chargement des messages:', error);
           toast.error('Erreur lors du chargement des messages');
