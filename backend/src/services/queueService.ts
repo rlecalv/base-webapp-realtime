@@ -1,29 +1,24 @@
-const Queue = require('bull');
-const redisClient = require('../config/redis');
+import Queue from 'bull';
+import redisClient from '../config/redis';
+
+// Configuration Redis pour Bull
+const redisConfig = {
+  host: process.env.REDIS_HOST || 'localhost',
+  port: parseInt(process.env.REDIS_PORT || '6379'),
+  db: parseInt(process.env.REDIS_DB || '0')
+};
 
 // Configuration des queues
 const emailQueue = new Queue('email processing', {
-  redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: process.env.REDIS_PORT || 6379,
-    db: process.env.REDIS_DB || 0
-  }
+  redis: redisConfig
 });
 
 const notificationQueue = new Queue('notification processing', {
-  redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: process.env.REDIS_PORT || 6379,
-    db: process.env.REDIS_DB || 0
-  }
+  redis: redisConfig
 });
 
 const dataProcessingQueue = new Queue('data processing', {
-  redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: process.env.REDIS_PORT || 6379,
-    db: process.env.REDIS_DB || 0
-  }
+  redis: redisConfig
 });
 
 // Jobs pour les emails
@@ -85,7 +80,7 @@ dataProcessingQueue.process('process_user_analytics', async (job) => {
     userId
   };
   
-  await redisClient.lpush(analyticsKey, JSON.stringify(analyticsData));
+  await redisClient.lPush(analyticsKey, JSON.stringify(analyticsData));
   await redisClient.expire(analyticsKey, 86400); // Expire après 24h
   
   console.log(`✅ Analytics traités pour l'utilisateur ${userId}`);
@@ -130,7 +125,7 @@ dataProcessingQueue.on('completed', (job, result) => {
   console.log(`✅ Job traitement données terminé: ${job.id}`);
 });
 
-module.exports = {
+export {
   emailQueue,
   notificationQueue,
   dataProcessingQueue

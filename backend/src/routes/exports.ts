@@ -1,33 +1,34 @@
 import express, { Request, Response, NextFunction } from 'express';
 import exportService from '../services/exportService';
 import auth from '../middleware/auth';
+import { exportLimiter } from '../middleware/rateLimiting';
 import { body, query, validationResult } from 'express-validator';
-import * as path from 'path';
-import { promises as fs } from 'fs';
 import { AuthenticatedRequest } from '../types';
 
 const router = express.Router();
 
 // Middleware de validation des erreurs
-const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
+const handleValidationErrors = (req: Request, res: Response, next: NextFunction): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
       message: 'Erreurs de validation',
       errors: errors.array()
     });
+    return;
   }
   next();
 };
 
 // Middleware pour vérifier les permissions admin (pour certains exports)
-const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  if (!req.user.is_admin) {
-    return res.status(403).json({
+const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+  if (!req.user?.is_admin) {
+    res.status(403).json({
       success: false,
       message: 'Accès refusé. Droits administrateur requis.'
     });
+    return;
   }
   next();
 };
@@ -60,6 +61,7 @@ const validateDateFilters = [
 router.get('/users', 
   auth, 
   requireAdmin,
+  exportLimiter,
   [
     ...validateExportFormat,
     ...validateDateFilters,
@@ -73,25 +75,26 @@ router.get('/users',
       .withMessage('isAdmin doit être un booléen'),
   ],
   handleValidationErrors,
-  async (req: AuthenticatedRequest, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { format = 'excel', dateFrom, dateTo, isActive, isAdmin } = req.query;
       
-      const filters = {};
-      if (dateFrom) filters.dateFrom = dateFrom;
-      if (dateTo) filters.dateTo = dateTo;
+      const filters: any = {};
+      if (dateFrom) filters.dateFrom = dateFrom as string;
+      if (dateTo) filters.dateTo = dateTo as string;
       if (isActive !== undefined) filters.isActive = isActive === 'true';
       if (isAdmin !== undefined) filters.isAdmin = isAdmin === 'true';
 
-      const result = await exportService.exportUsers(format, filters);
+      const result = await exportService.exportUsers(format as string, filters);
 
       if (format === 'pdf') {
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
-        return res.send(result.buffer);
+        res.send(result.buffer);
+        return;
       } else {
         // Pour Excel et CSV, renvoyer le fichier
-        res.download(result.filepath, result.filename, (err) => {
+        res.download(result.filepath, result.filename, (err: any) => {
           if (err) {
             console.error('Erreur lors du téléchargement:', err);
             res.status(500).json({
@@ -101,7 +104,7 @@ router.get('/users',
           }
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur export utilisateurs:', error);
       res.status(500).json({
         success: false,
@@ -119,6 +122,7 @@ router.get('/users',
  */
 router.get('/messages',
   auth,
+  exportLimiter,
   [
     ...validateExportFormat,
     ...validateDateFilters,
@@ -132,29 +136,30 @@ router.get('/messages',
       .withMessage('messageType doit être text, image, file ou system'),
   ],
   handleValidationErrors,
-  async (req, res) => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { format = 'excel', dateFrom, dateTo, userId, messageType } = req.query;
       
-      const filters = {};
-      if (dateFrom) filters.dateFrom = dateFrom;
-      if (dateTo) filters.dateTo = dateTo;
-      if (userId) filters.userId = parseInt(userId);
-      if (messageType) filters.messageType = messageType;
+      const filters: any = {};
+      if (dateFrom) filters.dateFrom = dateFrom as string;
+      if (dateTo) filters.dateTo = dateTo as string;
+      if (userId) filters.userId = parseInt(userId as string);
+      if (messageType) filters.messageType = messageType as string;
 
       // Si l'utilisateur n'est pas admin, il ne peut exporter que ses propres messages
-      if (!req.user.is_admin) {
-        filters.userId = req.user.id;
+      if (!req.user?.is_admin) {
+        filters.userId = req.user?.id;
       }
 
-      const result = await exportService.exportMessages(format, filters);
+      const result = await exportService.exportMessages(format as string, filters);
 
       if (format === 'pdf') {
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
-        return res.send(result.buffer);
+        res.send(result.buffer);
+        return;
       } else {
-        res.download(result.filepath, result.filename, (err) => {
+        res.download(result.filepath, result.filename, (err: any) => {
           if (err) {
             console.error('Erreur lors du téléchargement:', err);
             res.status(500).json({
@@ -164,7 +169,7 @@ router.get('/messages',
           }
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur export messages:', error);
       res.status(500).json({
         success: false,
@@ -183,6 +188,7 @@ router.get('/messages',
 router.get('/statistics',
   auth,
   requireAdmin,
+  exportLimiter,
   [
     query('format')
       .optional()
@@ -190,18 +196,19 @@ router.get('/statistics',
       .withMessage('Format doit être pdf ou excel pour les statistiques'),
   ],
   handleValidationErrors,
-  async (req, res) => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { format = 'pdf' } = req.query;
       
-      const result = await exportService.exportStatistics(format);
+      const result = await exportService.exportStatistics(format as string);
 
       if (format === 'pdf') {
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
-        return res.send(result.buffer);
+        res.send(result.buffer);
+        return;
       } else {
-        res.download(result.filepath, result.filename, (err) => {
+        res.download(result.filepath, result.filename, (err: any) => {
           if (err) {
             console.error('Erreur lors du téléchargement:', err);
             res.status(500).json({
@@ -211,7 +218,7 @@ router.get('/statistics',
           }
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur export statistiques:', error);
       res.status(500).json({
         success: false,
@@ -223,85 +230,24 @@ router.get('/statistics',
 );
 
 /**
- * @route POST /api/v1/exports/custom
- * @desc Export personnalisé avec données fournies
- * @access Private
+ * @route GET /api/v1/exports/health
+ * @desc Vérification de l'état du service d'export
+ * @access Public
  */
-router.post('/custom',
-  auth,
-  [
-    body('data')
-      .notEmpty()
-      .withMessage('Les données sont requises'),
-    body('format')
-      .isIn(['pdf', 'excel', 'csv'])
-      .withMessage('Format doit être pdf, excel ou csv'),
-    body('template')
-      .optional()
-      .isString()
-      .withMessage('Template doit être une chaîne de caractères'),
-    body('filename')
-      .optional()
-      .isString()
-      .withMessage('Filename doit être une chaîne de caractères'),
-  ],
-  handleValidationErrors,
-  async (req, res) => {
-    try {
-      const { data, format, template = 'default', filename } = req.body;
-      
-      let result;
-      
-      switch (format) {
-        case 'pdf':
-          result = await exportService.exportToPDF(data, template);
-          res.setHeader('Content-Type', 'application/pdf');
-          res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
-          return res.send(result.buffer);
-          
-        case 'excel':
-          result = await exportService.exportToExcel(data, 'Export', filename);
-          break;
-          
-        case 'csv':
-          if (!Array.isArray(data)) {
-            return res.status(400).json({
-              success: false,
-              message: 'Les données doivent être un tableau pour l\'export CSV'
-            });
-          }
-          result = await exportService.exportToCSV(data, filename);
-          break;
-      }
-
-      if (format !== 'pdf') {
-        res.download(result.filepath, result.filename, (err) => {
-          if (err) {
-            console.error('Erreur lors du téléchargement:', err);
-            res.status(500).json({
-              success: false,
-              message: 'Erreur lors du téléchargement du fichier'
-            });
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Erreur export personnalisé:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Erreur lors de l\'export personnalisé',
-        error: error.message
-      });
-    }
-  }
-);
+router.get('/health', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'Service d\'export opérationnel',
+    timestamp: new Date().toISOString()
+  });
+});
 
 /**
  * @route GET /api/v1/exports/formats
  * @desc Liste des formats d'export disponibles
  * @access Private
  */
-router.get('/formats', auth, (req, res) => {
+router.get('/formats', auth, (req: Request, res: Response) => {
   res.json({
     success: true,
     formats: [
@@ -342,17 +288,17 @@ router.delete('/cleanup',
       .withMessage('days doit être un entier entre 1 et 365'),
   ],
   handleValidationErrors,
-  async (req, res) => {
+  async (req: Request, res: Response): Promise<void> => {
     try {
       const { days = 7 } = req.query;
       
-      await exportService.cleanupOldExports(parseInt(days));
+      await exportService.cleanupOldExports(parseInt(days as string));
       
       res.json({
         success: true,
         message: `Nettoyage des fichiers d'export de plus de ${days} jours effectué`
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur nettoyage exports:', error);
       res.status(500).json({
         success: false,
@@ -362,43 +308,5 @@ router.delete('/cleanup',
     }
   }
 );
-
-/**
- * @route GET /api/v1/exports/health
- * @desc Vérification de l'état du service d'export
- * @access Private (Admin)
- */
-router.get('/health', auth, requireAdmin, async (req, res) => {
-  try {
-    // Tester Puppeteer
-    const browser = await exportService.getBrowser();
-    const puppeteerStatus = browser ? 'OK' : 'ERROR';
-    
-    // Vérifier le répertoire d'exports
-    const exportsDir = path.join(__dirname, '../../exports');
-    let exportsDirStatus = 'OK';
-    try {
-      await fs.access(exportsDir);
-    } catch {
-      exportsDirStatus = 'ERROR - Répertoire non accessible';
-    }
-
-    res.json({
-      success: true,
-      status: {
-        puppeteer: puppeteerStatus,
-        exportsDirectory: exportsDirStatus,
-        timestamp: new Date().toISOString()
-      }
-    });
-  } catch (error) {
-    console.error('Erreur health check exports:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la vérification du service d\'export',
-      error: error.message
-    });
-  }
-});
 
 export default router;

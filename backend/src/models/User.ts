@@ -18,7 +18,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
     return await bcrypt.compare(password, this.password);
   }
 
-  public toJSON(): Omit<UserAttributes, 'password'> {
+  public override toJSON(): Omit<UserAttributes, 'password'> {
     const values = { ...this.get() } as UserAttributes;
     delete (values as any).password;
     return values;
@@ -65,6 +65,16 @@ User.init({
   },
   last_login: {
     type: DataTypes.DATE
+  },
+  created_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   }
 }, {
   sequelize,

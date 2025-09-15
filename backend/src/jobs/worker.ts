@@ -1,6 +1,6 @@
-const { emailQueue, notificationQueue, dataProcessingQueue } = require('../services/queueService');
-const { syncDatabase } = require('../models');
-const redisClient = require('../config/redis');
+import { emailQueue, notificationQueue, dataProcessingQueue } from '../services/queueService';
+import { syncDatabase } from '../models';
+import redisClient from '../config/redis';
 
 console.log('🚀 Démarrage du worker Bull...');
 

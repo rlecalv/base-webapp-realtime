@@ -1,0 +1,217 @@
+# Configuration des middlewares Traefik pour WAF
+http:
+  middlewares:
+    # Headers de sécurité renforcés
+    security-headers:
+      headers:
+        # Protection XSS
+        browserXssFilter: true
+        contentTypeNosniff: true
+        
+        # Protection contre le clickjacking
+        frameDeny: true
+        
+        # HSTS (HTTP Strict Transport Security)
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        
+        # Redirection HTTPS
+        sslRedirect: true
+        sslTemporaryRedirect: false
+        
+        # Headers personnalisés
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
+        customResponseHeaders:
+          X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex"
+          X-Frame-Options: "DENY"
+          X-Content-Type-Options: "nosniff"
+          Referrer-Policy: "strict-origin-when-cross-origin"
+          Permissions-Policy: "geolocation=(), microphone=(), camera=()"
+          
+        # CSP (Content Security Policy)
+        contentSecurityPolicy: >
+          default-src 'self';
+          script-src 'self' 'unsafe-inline' 'unsafe-eval';
+          style-src 'self' 'unsafe-inline';
+          img-src 'self' data: https:;
+          font-src 'self';
+          connect-src 'self' wss: ws:;
+          frame-ancestors 'none';
+          base-uri 'self';
+          form-action 'self'
+
+    # Rate limiting au niveau Traefik
+    rate-limit-global:
+      rateLimit:
+        average: 100
+        period: 1m
+        burst: 200
+        sourceCriterion:
+          ipStrategy:
+            depth: 1
+
+    # Rate limiting strict pour les API sensibles
+    rate-limit-auth:
+      rateLimit:
+        average: 10
+        period: 1m
+        burst: 20
+        sourceCriterion:
+          ipStrategy:
+            depth: 1
+
+    # Protection contre les attaques par déni de service
+    ddos-protection:
+      rateLimit:
+        average: 1000
+        period: 1m
+        burst: 2000
+        sourceCriterion:
+          ipStrategy:
+            depth: 1
+
+    # Filtrage des User-Agents suspects
+    block-bad-bots:
+      plugin:
+        bouncer:
+          enabled: true
+          logLevel: INFO
+          updateFrequency: 4h
+          defaultDecision: allow
+          crowdsecMode: stream
+          crowdsecAppsecEnabled: true
+          crowdsecAppsecHost: crowdsec:7422
+          crowdsecLapiHost: crowdsec:8080
+          crowdsecLapiKey: ${CROWDSEC_BOUNCER_KEY}
+
+    # Compression des réponses
+    compression:
+      compress:
+        excludedContentTypes:
+          - "text/event-stream"
+          - "application/grpc"
+        minResponseBodyBytes: 1024
+
+    # Protection contre les injections
+    waf-protection:
+      plugin:
+        modsecurity:
+          enabled: true
+          rules: |
+            # Protection contre les injections SQL
+            SecRule ARGS "@detectSQLi" \
+              "id:1001,\
+              phase:2,\
+              block,\
+              msg:'SQL Injection Attack Detected',\
+              logdata:'Matched Data: %{MATCHED_VAR} found within %{MATCHED_VAR_NAME}',\
+              tag:'application-multi',\
+              tag:'language-multi',\
+              tag:'platform-multi',\
+              tag:'attack-sqli'"
+            
+            # Protection contre les injections XSS
+            SecRule ARGS "@detectXSS" \
+              "id:1002,\
+              phase:2,\
+              block,\
+              msg:'XSS Attack Detected',\
+              logdata:'Matched Data: %{MATCHED_VAR} found within %{MATCHED_VAR_NAME}',\
+              tag:'application-multi',\
+              tag:'language-multi',\
+              tag:'platform-multi',\
+              tag:'attack-xss'"
+            
+            # Protection contre les traversées de répertoires
+            SecRule ARGS "@detectPathTraversal" \
+              "id:1003,\
+              phase:2,\
+              block,\
+              msg:'Path Traversal Attack Detected',\
+              logdata:'Matched Data: %{MATCHED_VAR} found within %{MATCHED_VAR_NAME}',\
+              tag:'application-multi',\
+              tag:'language-multi',\
+              tag:'platform-multi',\
+              tag:'attack-lfi'"
+
+    # Limitation de la taille des requêtes
+    request-size-limit:
+      buffering:
+        maxRequestBodyBytes: 10485760  # 10MB
+        memRequestBodyBytes: 1048576   # 1MB
+        retryExpression: "IsNetworkError() && Attempts() < 3"
+
+    # Timeout des requêtes
+    timeout-config:
+      forwardingTimeouts:
+        dialTimeout: 30s
+        responseHeaderTimeout: 30s
+        idleConnTimeout: 90s
+
+    # IP Whitelist pour l'administration
+    admin-whitelist:
+      ipWhiteList:
+        sourceRange:
+          - "127.0.0.1/32"
+          - "10.0.0.0/8"
+          - "172.16.0.0/12"
+          - "192.168.0.0/16"
+
+    # Authentification basique pour les outils d'admin
+    admin-auth:
+      basicAuth:
+        users:
+          - "${ADMIN_USER}:${ADMIN_PASSWORD_HASH}"
+        realm: "Administration"
+        removeHeader: true
+
+    # Redirection HTTP vers HTTPS
+    https-redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+    # Middleware de logging avancé
+    access-log:
+      accessLog:
+        format: json
+        fields:
+          defaultMode: keep
+          names:
+            ClientUsername: drop
+          headers:
+            defaultMode: keep
+            names:
+              User-Agent: keep
+              Authorization: drop
+              Cookie: drop
+
+    # Protection contre les scans de ports
+    port-scan-protection:
+      rateLimit:
+        average: 5
+        period: 10s
+        burst: 10
+        sourceCriterion:
+          ipStrategy:
+            depth: 1
+            excludedIPs:
+              - "127.0.0.1/32"
+              - "10.0.0.0/8"
+
+    # Géo-blocage (optionnel)
+    geo-blocking:
+      plugin:
+        geoblock:
+          enabled: false  # À activer si nécessaire
+          allowedCountries:
+            - "FR"
+            - "EU"
+          blockedCountries:
+            - "CN"
+            - "RU"
+          defaultPolicy: allow
+          logLevel: INFO

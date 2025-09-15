@@ -1,10 +1,11 @@
-import puppeteer, { Browser, Page } from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 import * as XLSX from 'xlsx';
 import { createObjectCsvWriter } from 'csv-writer';
 import moment from 'moment';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 import { User, Message, sequelize } from '../models';
+import { Op } from 'sequelize';
 import { 
   ExportFilters, 
   ExportResult, 
@@ -49,7 +50,7 @@ class ExportService {
     return this.browser;
   }
 
-  private async closeBrowser(): Promise<void> {
+  async closeBrowser(): Promise<void> {
     if (this.browser) {
       await this.browser.close();
       this.browser = null;
@@ -66,7 +67,7 @@ class ExportService {
       await page.setContent(html, { waitUntil: 'networkidle0' });
 
       const pdfOptions = {
-        format: options.format || 'A4',
+        format: options.format || 'A4' as const,
         printBackground: true,
         margin: {
           top: '20mm',
@@ -90,7 +91,7 @@ class ExportService {
         filepath,
         buffer: Buffer.from(pdfBuffer)
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'export PDF:', error);
       throw new Error(`Erreur lors de l'export PDF: ${error.message}`);
     } finally {
@@ -110,7 +111,7 @@ class ExportService {
       } else if (typeof data === 'object' && data.sheets) {
         // Plusieurs feuilles
         for (const [name, sheetData] of Object.entries(data.sheets)) {
-          const worksheet = XLSX.utils.json_to_sheet(sheetData);
+          const worksheet = XLSX.utils.json_to_sheet(sheetData as any[]);
           XLSX.utils.book_append_sheet(workbook, worksheet, name);
         }
       } else {
@@ -127,7 +128,7 @@ class ExportService {
         filename: exportFilename,
         filepath
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'export Excel:', error);
       throw new Error(`Erreur lors de l'export Excel: ${error.message}`);
     }
@@ -149,7 +150,7 @@ class ExportService {
         title: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')
       }));
 
-      const csvWriter = createCsvWriter({
+      const csvWriter = createObjectCsvWriter({
         path: filepath,
         header: csvHeaders,
         encoding: 'utf8'
@@ -162,7 +163,7 @@ class ExportService {
         filename: exportFilename,
         filepath
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'export CSV:', error);
       throw new Error(`Erreur lors de l'export CSV: ${error.message}`);
     }
@@ -171,7 +172,7 @@ class ExportService {
   // Méthodes spécifiques pour les données de l'application
   async exportUsers(format: string = 'excel', filters: ExportFilters = {}): Promise<ExportResult> {
     try {
-      const whereClause = {};
+      const whereClause: any = {};
       
       if (filters.isActive !== undefined) {
         whereClause.is_active = filters.isActive;
@@ -183,7 +184,7 @@ class ExportService {
 
       if (filters.dateFrom) {
         whereClause.created_at = {
-          [sequelize.Op.gte]: new Date(filters.dateFrom)
+          [Op.gte]: new Date(filters.dateFrom)
         };
       }
 
@@ -214,7 +215,7 @@ class ExportService {
         default:
           throw new Error('Format d\'export non supporté');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'export des utilisateurs:', error);
       throw error;
     }
@@ -222,7 +223,7 @@ class ExportService {
 
   async exportMessages(format: string = 'excel', filters: ExportFilters = {}): Promise<ExportResult> {
     try {
-      const whereClause = {};
+      const whereClause: any = {};
       
       if (filters.userId) {
         whereClause.user_id = filters.userId;
@@ -234,14 +235,14 @@ class ExportService {
 
       if (filters.dateFrom) {
         whereClause.created_at = {
-          [sequelize.Op.gte]: new Date(filters.dateFrom)
+          [Op.gte]: new Date(filters.dateFrom)
         };
       }
 
       if (filters.dateTo) {
         whereClause.created_at = {
           ...whereClause.created_at,
-          [sequelize.Op.lte]: new Date(filters.dateTo)
+          [Op.lte]: new Date(filters.dateTo)
         };
       }
 
@@ -255,7 +256,7 @@ class ExportService {
         order: [['created_at', 'DESC']]
       });
 
-      const messageData = messages.map(message => ({
+      const messageData = messages.map((message: any) => ({
         id: message.id,
         contenu: message.content.substring(0, 100) + (message.content.length > 100 ? '...' : ''),
         utilisateur: message.user ? message.user.username : 'Utilisateur supprimé',
@@ -276,7 +277,7 @@ class ExportService {
         default:
           throw new Error('Format d\'export non supporté');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'export des messages:', error);
       throw error;
     }
@@ -307,11 +308,11 @@ class ExportService {
               'Statistiques Messages': [messageStats]
             }
           };
-          return await this.exportToExcel(excelData, null, `statistiques_${moment().format('YYYY-MM-DD')}.xlsx`);
+          return await this.exportToExcel(excelData, 'Statistiques', `statistiques_${moment().format('YYYY-MM-DD')}.xlsx`);
         default:
           throw new Error('Format d\'export non supporté pour les statistiques');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors de l\'export des statistiques:', error);
       throw error;
     }
@@ -325,7 +326,7 @@ class ExportService {
       User.count({
         where: {
           created_at: {
-            [sequelize.Op.gte]: moment().subtract(30, 'days').toDate()
+            [Op.gte]: moment().subtract(30, 'days').toDate()
           }
         }
       })
@@ -345,7 +346,7 @@ class ExportService {
       Message.count({
         where: {
           created_at: {
-            [sequelize.Op.gte]: moment().subtract(30, 'days').toDate()
+            [Op.gte]: moment().subtract(30, 'days').toDate()
           }
         }
       }),
@@ -358,8 +359,8 @@ class ExportService {
       })
     ]);
 
-    const typeStats = {};
-    messagesByType.forEach(stat => {
+    const typeStats: any = {};
+    messagesByType.forEach((stat: any) => {
       typeStats[stat.message_type] = stat.get('count');
     });
 
@@ -417,7 +418,7 @@ class ExportService {
                   </tr>
                 </thead>
                 <tbody>
-                  ${data.users.map(user => `
+                  ${data.users.map((user: any) => `
                     <tr>
                       <td>${user.id}</td>
                       <td>${user.nom_utilisateur}</td>
@@ -461,7 +462,7 @@ class ExportService {
                   </tr>
                 </thead>
                 <tbody>
-                  ${data.messages.map(message => `
+                  ${data.messages.map((message: any) => `
                     <tr>
                       <td>${message.id}</td>
                       <td>${message.contenu}</td>
@@ -576,7 +577,7 @@ class ExportService {
           console.log(`Fichier d'export supprimé: ${file}`);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur lors du nettoyage des exports:', error);
     }
   }

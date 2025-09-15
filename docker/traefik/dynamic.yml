@@ -1,0 +1,164 @@
+# Configuration dynamique Traefik avec WAF
+http:
+  # Services
+  services:
+    # Service de fallback pour les erreurs
+    error-pages:
+      loadBalancer:
+        servers:
+          - url: "http://error-pages:8080"
+
+  # Routers avec middlewares de sécurité
+  routers:
+    # Router pour les erreurs personnalisées
+    error-pages:
+      rule: "HostRegexp(`{host:.+}`)"
+      priority: 1
+      service: error-pages
+      middlewares:
+        - "security-headers"
+
+  # Middlewares de sécurité avancés
+  middlewares:
+    # Chaîne de middlewares pour l'API backend
+    api-security:
+      chain:
+        middlewares:
+          - "https-redirect"
+          - "security-headers"
+          - "rate-limit-global"
+          - "compression"
+          - "waf-protection"
+          - "request-size-limit"
+          - "timeout-config"
+          - "access-log"
+
+    # Chaîne pour les endpoints d'authentification
+    auth-security:
+      chain:
+        middlewares:
+          - "https-redirect"
+          - "security-headers"
+          - "rate-limit-auth"
+          - "waf-protection"
+          - "block-bad-bots"
+          - "access-log"
+
+    # Chaîne pour l'administration
+    admin-security:
+      chain:
+        middlewares:
+          - "https-redirect"
+          - "admin-whitelist"
+          - "admin-auth"
+          - "security-headers"
+          - "rate-limit-auth"
+          - "access-log"
+
+    # Chaîne pour le frontend
+    frontend-security:
+      chain:
+        middlewares:
+          - "https-redirect"
+          - "security-headers"
+          - "compression"
+          - "ddos-protection"
+          - "access-log"
+
+    # Pages d'erreur personnalisées
+    error-pages:
+      errors:
+        status:
+          - "400-599"
+        service: error-pages
+        query: "/{status}.html"
+
+# Configuration TLS avancée
+tls:
+  options:
+    # Configuration TLS moderne
+    modern:
+      minVersion: "VersionTLS12"
+      maxVersion: "VersionTLS13"
+      cipherSuites:
+        - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+        - "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
+        - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+        - "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
+      curvePreferences:
+        - "CurveP521"
+        - "CurveP384"
+      sniStrict: true
+      
+    # Configuration TLS intermédiaire (compatibilité)
+    intermediate:
+      minVersion: "VersionTLS12"
+      cipherSuites:
+        - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
+        - "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
+        - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+        - "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
+        - "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
+        - "TLS_RSA_WITH_AES_256_GCM_SHA384"
+        - "TLS_RSA_WITH_AES_128_GCM_SHA256"
+        - "TLS_RSA_WITH_AES_256_CBC_SHA"
+        - "TLS_RSA_WITH_AES_128_CBC_SHA"
+
+  # Certificats personnalisés si nécessaire
+  certificates:
+    - certFile: "/certs/domain.crt"
+      keyFile: "/certs/domain.key"
+      stores:
+        - default
+
+# Configuration des métriques et monitoring
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addServicesLabels: true
+    addRoutersLabels: true
+    buckets:
+      - 0.1
+      - 0.3
+      - 1.2
+      - 5.0
+
+# Configuration des logs
+log:
+  level: INFO
+  format: json
+  filePath: "/var/log/traefik/traefik.log"
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  format: json
+  fields:
+    defaultMode: keep
+    names:
+      ClientUsername: drop
+    headers:
+      defaultMode: keep
+      names:
+        User-Agent: keep
+        Authorization: drop
+        Cookie: drop
+        X-Forwarded-For: keep
+        X-Real-IP: keep
+
+# Configuration des plugins (si disponibles)
+experimental:
+  plugins:
+    # Plugin CrowdSec pour la protection collaborative
+    bouncer:
+      moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+      version: "v1.1.16"
+    
+    # Plugin GeoBlock
+    geoblock:
+      moduleName: "github.com/PascalMinder/geoblock"
+      version: "v0.2.7"
+    
+    # Plugin ModSecurity
+    modsecurity:
+      moduleName: "github.com/acouvreur/traefik-modsecurity-plugin"
+      version: "v1.3.0"

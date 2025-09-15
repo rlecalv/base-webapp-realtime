@@ -87,7 +87,7 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-    command: node src/jobs/worker.js
+    command: npx ts-node-dev src/jobs/worker.ts
 
   # Adminer pour la gestion de base de données
   adminer:

@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
+import { generalLimiter, abuseDetection } from './middleware/rateLimiting';
 
 import config from './config';
 import { syncDatabase } from './models';
@@ -44,17 +44,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: config.rateLimit.windowMs,
-  max: config.rateLimit.max,
-  message: {
-    error: 'Trop de requêtes, veuillez réessayer plus tard'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use('/api/', limiter);
+// Détection d'abus et rate limiting
+app.use(abuseDetection);
+app.use('/api/', generalLimiter);
 
 // Middlewares généraux
 app.use(compression());
@@ -86,7 +78,7 @@ app.get('/health', async (req, res) => {
     res.status(503).json({
       status: 'ERROR',
       timestamp: new Date().toISOString(),
-      error: error.message
+      error: (error as Error).message
     });
   }
 });
@@ -122,7 +114,7 @@ app.use('*', (req, res) => {
 });
 
 // Middleware de gestion des erreurs globales
-app.use((error, req, res, next) => {
+app.use((error: any, req: any, res: any, next: any) => {
   console.error('Erreur globale:', error);
   
   res.status(error.status || 500).json({

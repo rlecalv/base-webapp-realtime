@@ -123,7 +123,7 @@ services:
       - "traefik.http.middlewares.security-headers.headers.stsIncludeSubdomains=true"
       - "traefik.http.middlewares.security-headers.headers.stsPreload=true"
       - "traefik.http.middlewares.security-headers.headers.stsSeconds=31536000"
-      - "traefik.http.routers.backend.middlewares=security-headers"
+      - "traefik.http.routers.backend.middlewares=api-security@file"
 
   # Worker Bull pour les tâches asynchrones
   worker:
@@ -188,9 +188,51 @@ services:
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
       - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-      - "traefik.http.routers.frontend.middlewares=security-headers"
+      - "traefik.http.routers.frontend.middlewares=frontend-security@file"
 
-  # Reverse Proxy Traefik avec sécurité renforcée
+  # Nginx pour les assets statiques et reverse proxy
+  nginx:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: base_app_nginx
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - base_app_network
+    volumes:
+      - nginx_cache:/var/cache/nginx
+      - nginx_logs:/var/log/nginx
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/nginx-health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.nginx.entrypoints=websecure"
+      - "traefik.http.routers.nginx.tls.certresolver=letsencrypt"
+      - "traefik.http.services.nginx.loadbalancer.server.port=80"
+      - "traefik.http.routers.nginx.middlewares=frontend-security@file"
+
+  # Pages d'erreur personnalisées
+  error-pages:
+    build:
+      context: ./docker/error-pages
+      dockerfile: Dockerfile
+    container_name: base_app_error_pages
+    restart: unless-stopped
+    networks:
+      - base_app_network
+    security_opt:
+      - no-new-privileges:true
+
+  # Reverse Proxy Traefik avec WAF intégré
   traefik:
     image: traefik:v3.0
     container_name: base_app_traefik
@@ -199,8 +241,13 @@ services:
       - --api.dashboard=true
       - --api.debug=false
       - --log.level=${LOG_LEVEL:-INFO}
+      - --log.format=json
+      - --accesslog=true
+      - --accesslog.format=json
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
@@ -212,6 +259,13 @@ services:
       # Sécurité
       - --global.sendAnonymousUsage=false
       - --serversTransport.insecureSkipVerify=false
+      # Métriques
+      - --metrics.prometheus=true
+      - --metrics.prometheus.addEntryPointsLabels=true
+      - --metrics.prometheus.addServicesLabels=true
+      # Plugins expérimentaux
+      - --experimental.plugins.bouncer.modulename=github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin
+      - --experimental.plugins.bouncer.version=v1.1.16
     ports:
       - "80:80"
       - "443:443"
@@ -219,6 +273,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_data:/acme.json
+      - ./docker/traefik:/etc/traefik/dynamic:ro
+      - traefik_logs:/var/log/traefik
     networks:
       - base_app_network
     security_opt:
@@ -232,7 +288,7 @@ services:
       - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
       # Authentification basique pour le dashboard
       - "traefik.http.middlewares.auth.basicauth.users=${TRAEFIK_DASHBOARD_USER:-admin}:${TRAEFIK_DASHBOARD_PASSWORD_HASH}"
-      - "traefik.http.routers.traefik.middlewares=auth"
+      - "traefik.http.routers.traefik.middlewares=admin-security@file"
 
   # Monitoring avec Adminer sécurisé
   adminer:
@@ -256,7 +312,7 @@ services:
       - "traefik.http.services.adminer.loadbalancer.server.port=8080"
       # Authentification pour Adminer
       - "traefik.http.middlewares.adminer-auth.basicauth.users=${TRAEFIK_DASHBOARD_USER:-admin}:${TRAEFIK_DASHBOARD_PASSWORD_HASH}"
-      - "traefik.http.routers.adminer.middlewares=adminer-auth"
+      - "traefik.http.routers.adminer.middlewares=admin-security@file"
 
 volumes:
   postgres_data:
@@ -264,6 +320,12 @@ volumes:
   redis_data:
     driver: local
   traefik_data:
+    driver: local
+  traefik_logs:
+    driver: local
+  nginx_cache:
+    driver: local
+  nginx_logs:
     driver: local
   exports_data:
     driver: local

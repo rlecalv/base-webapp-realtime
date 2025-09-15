@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base WebApp - Erreur</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .error-container {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .error-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+        
+        .error-message {
+            font-size: 1.1rem;
+            color: #718096;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .error-code {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+        }
+        
+        .back-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">🛡️</div>
+        <h1 class="error-title">Erreur détectée</h1>
+        <p class="error-message">
+            Une erreur s'est produite lors du traitement de votre requête. 
+            Notre système de sécurité a détecté une anomalie.
+        </p>
+        <div class="error-code">
+            Référence: ERR-<span id="error-ref"></span>
+        </div>
+        <a href="/" class="back-button">Retour à l'accueil</a>
+        <div class="footer">
+            Base WebApp - Système de sécurité actif
+        </div>
+    </div>
+    
+    <script>
+        // Générer une référence d'erreur unique
+        document.getElementById('error-ref').textContent = 
+            Math.random().toString(36).substr(2, 9).toUpperCase();
+    </script>
+</body>
+</html>
