@@ -176,122 +176,108 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Indicateurs principaux modernisés */}
+      {/* Indicateurs principaux */}
       {synthese && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 hover:shadow-lg transition-all duration-200">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <BanknotesIconSolid className="h-6 w-6 text-green-600" />
-                </div>
-                <Badge variant="outline" className="text-green-700 border-green-300">+12%</Badge>
+          <Card className="p-6 border-gray-200 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <BanknotesIconSolid className="h-6 w-6 text-gray-600" />
               </div>
-              <h3 className="text-sm font-medium text-gray-600 mb-1">Revenus Bruts</h3>
-              <p className="text-2xl font-bold text-green-700 mb-1">
-                {formatCurrency(synthese.revenus_bruts_totaux)}
-              </p>
-              <p className="text-xs text-green-600">par an</p>
             </div>
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Revenus Bruts</h3>
+            <p className="text-2xl font-bold text-gray-900 mb-1">
+              {formatCurrency(synthese.revenus_bruts_totaux)}
+            </p>
+            <p className="text-xs text-gray-500">par an</p>
           </Card>
           
-          <Card className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200 hover:shadow-lg transition-all duration-200">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <CashIcon className="h-6 w-6 text-blue-600" />
-                </div>
-                <Badge variant="outline" className={synthese.cash_flow_total >= 0 ? "text-blue-700 border-blue-300" : "text-red-700 border-red-300"}>
-                  {synthese.cash_flow_total >= 0 ? 'Positif' : 'Négatif'}
-                </Badge>
+          <Card className="p-6 border-gray-200 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <CashIcon className="h-6 w-6 text-gray-600" />
               </div>
-              <h3 className="text-sm font-medium text-gray-600 mb-1">Cash Flow</h3>
-              <p className={`text-2xl font-bold mb-1 ${
-                synthese.cash_flow_total >= 0 ? 'text-blue-700' : 'text-red-600'
-              }`}>
-                {formatCurrency(synthese.cash_flow_total)}
-              </p>
-              <p className="text-xs text-blue-600">net annuel</p>
             </div>
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Cash Flow</h3>
+            <p className={`text-2xl font-bold mb-1 ${
+              synthese.cash_flow_total >= 0 ? 'text-gray-900' : 'text-red-600'
+            }`}>
+              {formatCurrency(synthese.cash_flow_total)}
+            </p>
+            <p className="text-xs text-gray-500">net annuel</p>
           </Card>
           
-          <Card className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200 hover:shadow-lg transition-all duration-200">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <HomeIconSolid className="h-6 w-6 text-purple-600" />
-                </div>
-                <Badge variant="outline" className="text-purple-700 border-purple-300">Portfolio</Badge>
+          <Card className="p-6 border-gray-200 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <HomeIconSolid className="h-6 w-6 text-gray-600" />
               </div>
-              <h3 className="text-sm font-medium text-gray-600 mb-1">Valorisation</h3>
-              <p className="text-2xl font-bold text-purple-700 mb-1">
-                {formatCurrency(25000000)} {/* Valeur corrigée temporairement */}
-              </p>
-              <p className="text-xs text-purple-600">estimée</p>
             </div>
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Valorisation</h3>
+            <p className="text-2xl font-bold text-gray-900 mb-1">
+              {formatCurrency(synthese.valorisation_totale)}
+            </p>
+            <p className="text-xs text-gray-500">estimée</p>
           </Card>
           
-          <Card className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200 hover:shadow-lg transition-all duration-200">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <ChartBarIcon className="h-6 w-6 text-orange-600" />
-                </div>
-                <Badge variant="outline" className="text-orange-700 border-orange-300">Excellent</Badge>
+          <Card className="p-6 border-gray-200 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <ChartBarIcon className="h-6 w-6 text-gray-600" />
               </div>
-              <h3 className="text-sm font-medium text-gray-600 mb-1">Rendement</h3>
-              <p className="text-2xl font-bold text-orange-700 mb-1">
-                {formatPercentage(synthese.rendement_net_global)}
-              </p>
-              <p className="text-xs text-orange-600">net global</p>
             </div>
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Rendement</h3>
+            <p className="text-2xl font-bold text-gray-900 mb-1">
+              {formatPercentage(synthese.rendement_net_global)}
+            </p>
+            <p className="text-xs text-gray-500">net global</p>
           </Card>
         </div>
       )}
 
-      {/* Statistiques patrimoine modernisées */}
+      {/* Statistiques patrimoine */}
       {synthese && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border-l-4 border-blue-500">
+          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border border-gray-200">
             <div className="p-4 text-center">
               <div className="flex justify-center mb-2">
-                <BuildingOfficeIcon className="h-8 w-8 text-blue-600" />
+                <BuildingOfficeIcon className="h-8 w-8 text-gray-600" />
               </div>
               <div className="text-2xl font-bold text-gray-800">{synthese.nb_societes}</div>
               <div className="text-sm text-gray-500 font-medium">Sociétés</div>
             </div>
           </Card>
-          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border-l-4 border-purple-500">
+          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border border-gray-200">
             <div className="p-4 text-center">
               <div className="flex justify-center mb-2">
-                <HomeIcon className="h-8 w-8 text-purple-600" />
+                <HomeIcon className="h-8 w-8 text-gray-600" />
               </div>
               <div className="text-2xl font-bold text-gray-800">{synthese.nb_actifs}</div>
               <div className="text-sm text-gray-500 font-medium">Actifs</div>
             </div>
           </Card>
-          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border-l-4 border-green-500">
+          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border border-gray-200">
             <div className="p-4 text-center">
               <div className="flex justify-center mb-2">
-                <UsersIcon className="h-8 w-8 text-green-600" />
+                <UsersIcon className="h-8 w-8 text-gray-600" />
               </div>
               <div className="text-2xl font-bold text-gray-800">{synthese.nb_locataires}</div>
               <div className="text-sm text-gray-500 font-medium">Locataires</div>
             </div>
           </Card>
-          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border-l-4 border-orange-500">
+          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border border-gray-200">
             <div className="p-4 text-center">
               <div className="flex justify-center mb-2">
-                <DocumentTextIcon className="h-8 w-8 text-orange-600" />
+                <DocumentTextIcon className="h-8 w-8 text-gray-600" />
               </div>
               <div className="text-2xl font-bold text-gray-800">{synthese.nb_contrats_loyer}</div>
               <div className="text-sm text-gray-500 font-medium">Contrats</div>
             </div>
           </Card>
-          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border-l-4 border-indigo-500">
+          <Card className="bg-white hover:bg-gray-50 transition-colors duration-200 border border-gray-200">
             <div className="p-4 text-center">
               <div className="flex justify-center mb-2">
-                <RectangleStackIcon className="h-8 w-8 text-indigo-600" />
+                <RectangleStackIcon className="h-8 w-8 text-gray-600" />
               </div>
               <div className="text-2xl font-bold text-gray-800">
                 {formatSurface(synthese.surface_totale_patrimoine)}
