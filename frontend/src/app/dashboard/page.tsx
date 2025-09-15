@@ -88,17 +88,23 @@ export default function DashboardPage() {
     loadDashboardData();
   }, []);
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = (value: number | null | undefined) => {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0 €';
+    }
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
-    }).format(value);
+    }).format(Number(value));
   };
 
-  const formatPercentage = (value: number) => {
-    return `${value.toFixed(2)}%`;
+  const formatPercentage = (value: number | null | undefined) => {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0.00%';
+    }
+    return `${Number(value).toFixed(2)}%`;
   };
 
   if (loading) {

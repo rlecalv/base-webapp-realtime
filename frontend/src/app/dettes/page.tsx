@@ -56,13 +56,16 @@ export default function DettesPage() {
     loadDettes();
   }, []);
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = (value: number | null | undefined) => {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0 €';
+    }
     return new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: 'EUR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
-    }).format(value);
+    }).format(Number(value));
   };
 
   const formatDate = (dateString: string) => {
