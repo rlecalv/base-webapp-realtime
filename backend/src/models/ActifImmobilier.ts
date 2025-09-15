@@ -26,6 +26,7 @@ interface ActifImmobilierAttributes {
   assurance?: number;
   frais_gestion?: number;
   travaux_annuels?: number;
+  pourcentage_detention?: number;
   description?: string;
   actif: boolean;
   created_at?: Date;
@@ -59,6 +60,7 @@ class ActifImmobilier extends Model<ActifImmobilierAttributes, ActifImmobilierCr
   public assurance?: number;
   public frais_gestion?: number;
   public travaux_annuels?: number;
+  public pourcentage_detention?: number;
   public description?: string;
   public actif!: boolean;
   
@@ -175,6 +177,15 @@ ActifImmobilier.init(
     travaux_annuels: {
       type: DataTypes.DECIMAL(15, 2),
       allowNull: true,
+    },
+    pourcentage_detention: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+      comment: 'Pourcentage de détention FINDEV en pourcentage (ex: 25.00 pour 25%)',
+      validate: {
+        min: 0,
+        max: 100,
+      },
     },
     description: {
       type: DataTypes.TEXT,

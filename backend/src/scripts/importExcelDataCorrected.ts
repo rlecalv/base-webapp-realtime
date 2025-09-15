@@ -278,10 +278,14 @@ const clearAndImportComplete = async (): Promise<void> => {
           prix_acquisition: actifData.prixAchat || undefined,
           valeur_actuelle: actifData.prixAchat || undefined,
           rendement_brut: actifData.prixAchat > 0 ? (loyerTotalActif / actifData.prixAchat) * 100 : undefined,
+          pourcentage_detention: actifData.pourcentageDetention > 0 ? actifData.pourcentageDetention * 100 : undefined,
           actif: true
         });
         
         console.log(`   ✅ Actif créé: ${actif.nom} (ID: ${actif.id})`);
+        if (actifData.pourcentageDetention > 0) {
+          console.log(`     📊 Pourcentage détention FINDEV: ${(actifData.pourcentageDetention * 100).toFixed(1)}%`);
+        }
         
         // Créer tous les loyers pour cet actif
         for (const loyerData of actifData.loyers) {
@@ -395,9 +399,16 @@ const clearAndImportComplete = async (): Promise<void> => {
       }
     }
     
+    // Calculer les statistiques de détention
+    const actifsAvecDetention = actifs.filter(a => a.pourcentageDetention > 0);
+    const detentionMoyenne = actifsAvecDetention.length > 0 ? 
+      actifsAvecDetention.reduce((sum, a) => sum + a.pourcentageDetention, 0) / actifsAvecDetention.length : 0;
+    
     console.log(`\n🎯 RÉSUMÉ DE L'IMPORT CORRIGÉ:`);
     console.log(`   - Total loyers importés: ${totalLoyersImportes.toFixed(2)}€/an`);
     console.log(`   - Nombre d'actifs: ${actifs.length}`);
+    console.log(`   - Actifs avec détention FINDEV: ${actifsAvecDetention.length}/${actifs.length}`);
+    console.log(`   - Détention moyenne FINDEV: ${(detentionMoyenne * 100).toFixed(1)}%`);
     console.log(`   - Nombre de locataires: ${locatairesUniques.length}`);
     console.log(`   - Nombre de sociétés: ${societesUniques.length}`);
     
