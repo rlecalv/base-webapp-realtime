@@ -10,7 +10,9 @@ import { ChatInput } from '@/components/ChatInput';
 import { TypingIndicator } from '@/components/TypingIndicator';
 import { UserList } from '@/components/UserList';
 import { Button } from '@/components/ui/Button';
-import { LogOut, MessageCircle } from 'lucide-react';
+import { LogOut, MessageCircle, Settings } from 'lucide-react';
+import { FormInput } from '@/components/ui/FormInput';
+import { Avatar } from '@/components/ui/Avatar';
 import toast from 'react-hot-toast';
 
 export default function ChatPage() {
@@ -153,6 +155,17 @@ export default function ChatPage() {
               }`}></div>
               <span>{isConnected ? 'En ligne' : 'Hors ligne'}</span>
             </div>
+            
+            {user?.is_admin && (
+              <Button
+                variant="outline"
+                onClick={() => router.push('/admin')}
+                className="flex items-center space-x-2"
+              >
+                <Settings className="w-4 h-4" />
+                <span>Administration</span>
+              </Button>
+            )}
             
             <Button
               variant="outline"
