@@ -8,16 +8,16 @@ Cette mise à jour majeure apporte des améliorations significatives en termes d
 
 ### 🔥 URGENT - Sécurité
 
-#### ✅ Rate Limiting Avancé
-- **Système multi-niveaux** avec Redis distribué
+#### ✅ Rate Limiting Simplifié et Efficace
+- **Système en mémoire** performant et simple
 - **Rate limiting spécialisé** par type d'endpoint :
-  - Authentification : 5 tentatives/15min
+  - Authentification : 5 tentatives/15min/IP
   - Inscription : 3 inscriptions/heure/IP
-  - Exports : 10 exports/heure/utilisateur
-  - Messages : 30 messages/minute/utilisateur
+  - Exports : 5 exports/10min/IP
+  - Messages : 30 messages/minute/IP
   - API générale : 100 requêtes/15min/IP
-- **Détection d'abus** automatique avec patterns suspects
-- **Blocage intelligent** des bots malveillants
+- **Détection d'abus** avec limite haute (200 req/min)
+- **Logging automatique** des activités suspectes
 
 #### ✅ WAF (Web Application Firewall) avec Traefik
 - **Configuration WAF complète** avec middlewares Traefik
@@ -49,16 +49,14 @@ Cette mise à jour majeure apporte des améliorations significatives en termes d
 - **Utilisateurs non-root** systématiques
 - **Scripts de build** automatisés avec cache
 
-#### ✅ Cache HTTP avec Redis
-- **Système de cache HTTP** sophistiqué
-- **Cache multi-niveaux** :
-  - Cache applicatif (utilisateurs, stats, messages)
-  - Cache HTTP (réponses API)
-  - Cache des sessions
-  - Cache des exports
-- **Invalidation intelligente** par pattern
-- **Compression** et sérialisation optimisées
-- **API de gestion** du cache pour les admins
+#### ✅ Cache Redis Optimisé
+- **Cache Redis** pour les données critiques
+- **Utilisation ciblée** :
+  - Sessions utilisateur
+  - Rate limiting (si activé)
+  - Données temporaires
+- **Configuration simple** et maintenable
+- **Performance** sans complexité excessive
 
 #### ✅ CDN pour Assets Statiques
 - **Configuration CloudFlare** complète
