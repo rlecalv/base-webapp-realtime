@@ -81,6 +81,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       setIsConnected(false);
       setTypingUsers([]);
       setConnectedUsers([]);
+      // Réinitialiser les messages lors de la déconnexion pour éviter les doublons
+      setMessages([]);
     }
   };
 
@@ -105,7 +107,14 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
           updated_at: data.timestamp || new Date().toISOString(),
         };
         
-        setMessages(prev => [...prev, newMessage]);
+        setMessages(prev => {
+          // Vérifier si le message existe déjà pour éviter les doublons
+          const exists = prev.some(msg => msg.id === newMessage.id);
+          if (exists) {
+            return prev;
+          }
+          return [...prev, newMessage];
+        });
         
         // Notification si ce n'est pas notre message
         if (user && data.user.id !== user.id) {
@@ -223,7 +232,14 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   // Méthodes pour gérer les messages localement
   const addMessage = (message: Message) => {
-    setMessages(prev => [...prev, message]);
+    setMessages(prev => {
+      // Vérifier si le message existe déjà pour éviter les doublons
+      const exists = prev.some(msg => msg.id === message.id);
+      if (exists) {
+        return prev;
+      }
+      return [...prev, message];
+    });
   };
 
   const updateMessage = (message: Message) => {

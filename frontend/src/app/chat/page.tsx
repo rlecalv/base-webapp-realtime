@@ -43,7 +43,7 @@ export default function ChatPage() {
           
           // Vérifier que la réponse contient des messages
           if (response && response.messages && Array.isArray(response.messages)) {
-            // Les messages sont déjà dans l'ordre chronologique
+            // Ajouter tous les messages en une seule fois pour éviter les doublons
             response.messages.forEach(message => addMessage(message));
           } else {
             console.warn('Format de réponse inattendu:', response);

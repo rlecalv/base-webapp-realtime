@@ -3,10 +3,12 @@ import { Request, Response } from 'express';
 
 // Configuration simple sans Redis store pour éviter les dépendances complexes
 
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 // Rate limiting général pour toutes les API
 export const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requêtes par IP par fenêtre
+  max: isDevelopment ? 1000 : 100, // Plus permissif en développement
   message: {
     error: 'Trop de requêtes, veuillez réessayer plus tard'
   },
@@ -16,10 +18,12 @@ export const generalLimiter = rateLimit({
 
 // Rate limiting strict pour l'authentification
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 tentatives de connexion par IP
+  windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 5 min en dev, 15 min en prod
+  max: isDevelopment ? 50 : 5, // 50 tentatives en dev, 5 en prod
   message: {
-    error: 'Trop de tentatives de connexion, veuillez réessayer dans 15 minutes'
+    error: isDevelopment 
+      ? 'Trop de tentatives de connexion, veuillez réessayer dans 5 minutes (mode développement)'
+      : 'Trop de tentatives de connexion, veuillez réessayer dans 15 minutes'
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -27,10 +31,12 @@ export const authLimiter = rateLimit({
 
 // Rate limiting pour l'inscription
 export const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 heure
-  max: 3, // 3 inscriptions par IP par heure
+  windowMs: isDevelopment ? 10 * 60 * 1000 : 60 * 60 * 1000, // 10 min en dev, 1h en prod
+  max: isDevelopment ? 10 : 3, // 10 inscriptions en dev, 3 en prod
   message: {
-    error: 'Trop d\'inscriptions, veuillez réessayer dans 1 heure'
+    error: isDevelopment
+      ? 'Trop d\'inscriptions, veuillez réessayer dans 10 minutes (mode développement)'
+      : 'Trop d\'inscriptions, veuillez réessayer dans 1 heure'
   },
   standardHeaders: true,
   legacyHeaders: false,
@@ -39,7 +45,7 @@ export const registerLimiter = rateLimit({
 // Rate limiting pour les messages
 export const messageLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 30, // 30 messages par minute
+  max: isDevelopment ? 100 : 30, // 100 messages en dev, 30 en prod
   message: {
     error: 'Trop de messages envoyés, veuillez ralentir'
   },
@@ -49,10 +55,12 @@ export const messageLimiter = rateLimit({
 
 // Rate limiting pour les exports (plus restrictif)
 export const exportLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 5, // 5 exports par IP par 10 minutes
+  windowMs: isDevelopment ? 5 * 60 * 1000 : 10 * 60 * 1000, // 5 min en dev, 10 min en prod
+  max: isDevelopment ? 20 : 5, // 20 exports en dev, 5 en prod
   message: {
-    error: 'Trop d\'exports demandés, veuillez réessayer dans 10 minutes'
+    error: isDevelopment
+      ? 'Trop d\'exports demandés, veuillez réessayer dans 5 minutes (mode développement)'
+      : 'Trop d\'exports demandés, veuillez réessayer dans 10 minutes'
   },
   standardHeaders: true,
   legacyHeaders: false,
