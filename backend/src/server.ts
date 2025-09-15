@@ -16,6 +16,7 @@ import redisClient from './config/redis';
 import authRoutes from './routes/auth';
 import messageRoutes from './routes/messages';
 import exportRoutes from './routes/exports';
+import patrimoineRoutes from './routes/patrimoine';
 
 // Créer l'application Express
 const app = express();
@@ -87,6 +88,7 @@ app.get('/health', async (req, res) => {
 app.use(`/api/${config.app.apiVersion}/auth`, authRoutes);
 app.use(`/api/${config.app.apiVersion}/messages`, messageRoutes);
 app.use(`/api/${config.app.apiVersion}/exports`, exportRoutes);
+app.use(`/api/${config.app.apiVersion}`, patrimoineRoutes);
 
 // Route par défaut
 app.get('/', (req, res) => {
@@ -99,6 +101,12 @@ app.get('/', (req, res) => {
       auth: `/api/${config.app.apiVersion}/auth`,
       messages: `/api/${config.app.apiVersion}/messages`,
       exports: `/api/${config.app.apiVersion}/exports`,
+      patrimoine: `/api/${config.app.apiVersion}/patrimoine`,
+      locataires: `/api/${config.app.apiVersion}/locataires`,
+      societes: `/api/${config.app.apiVersion}/societes`,
+      dettes: `/api/${config.app.apiVersion}/dettes`,
+      synthese: `/api/${config.app.apiVersion}/synthese`,
+      echeances: `/api/${config.app.apiVersion}/echeances`,
       websocket: '/socket.io'
     }
   });

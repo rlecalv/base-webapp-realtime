@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrimoine Immobilier FINDEV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">📊 Patrimoine Immobilier FINDEV</h1>
+            <p class="text-gray-600">Tableau de bord patrimonial - Données importées depuis Excel</p>
+        </header>
+
+        <!-- Indicateurs globaux -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">💵 Revenus Totaux</h3>
+                <p class="text-3xl font-bold text-green-600">2 129 704€</p>
+                <p class="text-sm text-gray-500">par an</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">🏠 Valorisation</h3>
+                <p class="text-3xl font-bold text-blue-600">23.8M€</p>
+                <p class="text-sm text-gray-500">portefeuille total</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">🏦 Dettes</h3>
+                <p class="text-3xl font-bold text-red-600">16.3M€</p>
+                <p class="text-sm text-gray-500">capital restant dû</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">📈 Endettement</h3>
+                <p class="text-3xl font-bold text-orange-600">66.1%</p>
+                <p class="text-sm text-gray-500">ratio LTV</p>
+            </div>
+        </div>
+
+        <!-- Top 5 Actifs -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">🏆 Top 5 Actifs par Revenus</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="px-4 py-2 text-left">Actif</th>
+                            <th class="px-4 py-2 text-left">Ville</th>
+                            <th class="px-4 py-2 text-left">Société</th>
+                            <th class="px-4 py-2 text-right">Revenus/an</th>
+                            <th class="px-4 py-2 text-right">Locataires</th>
+                            <th class="px-4 py-2 text-right">Rendement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="px-4 py-2 font-medium">🥇 Local commercial - Avignon</td>
+                            <td class="px-4 py-2">Avignon</td>
+                            <td class="px-4 py-2">SAS FINANCIERE VOLNEY</td>
+                            <td class="px-4 py-2 text-right font-bold text-green-600">429 812€</td>
+                            <td class="px-4 py-2 text-right">5</td>
+                            <td class="px-4 py-2 text-right">8.43%</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="px-4 py-2 font-medium">🥈 Local commercial - Anglet</td>
+                            <td class="px-4 py-2">Anglet</td>
+                            <td class="px-4 py-2">SCI FONCIERE AGA</td>
+                            <td class="px-4 py-2 text-right font-bold text-green-600">345 310€</td>
+                            <td class="px-4 py-2 text-right">1</td>
+                            <td class="px-4 py-2 text-right">8.63%</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="px-4 py-2 font-medium">🥉 Local commercial - Osny</td>
+                            <td class="px-4 py-2">Osny</td>
+                            <td class="px-4 py-2">SAS B2A</td>
+                            <td class="px-4 py-2 text-right font-bold text-green-600">273 164€</td>
+                            <td class="px-4 py-2 text-right">7</td>
+                            <td class="px-4 py-2 text-right">10.63%</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="px-4 py-2 font-medium">Locaux commerciaux - Cormeilles</td>
+                            <td class="px-4 py-2">Cormeilles-en-Parisis</td>
+                            <td class="px-4 py-2">SCI FONCIERE AGA</td>
+                            <td class="px-4 py-2 text-right font-bold text-green-600">258 210€</td>
+                            <td class="px-4 py-2 text-right">3</td>
+                            <td class="px-4 py-2 text-right">12.76%</td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="px-4 py-2 font-medium">Local commercial - Vitrolles</td>
+                            <td class="px-4 py-2">Vitrolles</td>
+                            <td class="px-4 py-2">SCI W2A</td>
+                            <td class="px-4 py-2 text-right font-bold text-green-600">254 597€</td>
+                            <td class="px-4 py-2 text-right">3</td>
+                            <td class="px-4 py-2 text-right">7.79%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Répartition par société -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">🏢 Répartition par Société</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-700">SCI FONCIERE AGA</h3>
+                    <p class="text-2xl font-bold text-green-600">819k€</p>
+                    <p class="text-sm text-gray-500">5 actifs, 10 contrats</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-700">SAS FINANCIERE VOLNEY</h3>
+                    <p class="text-2xl font-bold text-green-600">430k€</p>
+                    <p class="text-sm text-gray-500">1 actif, 5 contrats</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-700">SAS B2A</h3>
+                    <p class="text-2xl font-bold text-green-600">273k€</p>
+                    <p class="text-sm text-gray-500">1 actif, 7 contrats</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-700">SCI W2A</h3>
+                    <p class="text-2xl font-bold text-green-600">255k€</p>
+                    <p class="text-sm text-gray-500">1 actif, 3 contrats</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-700">SCI MDA</h3>
+                    <p class="text-2xl font-bold text-green-600">98k€</p>
+                    <p class="text-sm text-gray-500">1 actif, 2 contrats</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-700">Autres sociétés</h3>
+                    <p class="text-2xl font-bold text-green-600">244k€</p>
+                    <p class="text-sm text-gray-500">7 actifs, 12 contrats</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statut technique -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">🔧 Statut Technique</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">✅ Services Actifs</h3>
+                    <ul class="space-y-1 text-sm">
+                        <li>🗄️ PostgreSQL : <span class="text-green-600 font-medium">Connecté</span></li>
+                        <li>🔴 Redis : <span class="text-green-600 font-medium">Connecté</span></li>
+                        <li>🔧 Backend API : <span class="text-green-600 font-medium">Port 8000</span></li>
+                        <li>📊 8 Vues SQL : <span class="text-green-600 font-medium">Créées</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2">📊 Données Importées</h3>
+                    <ul class="space-y-1 text-sm">
+                        <li>🏢 16 actifs immobiliers</li>
+                        <li>👥 35 locataires</li>
+                        <li>🏛️ 12 sociétés propriétaires</li>
+                        <li>📄 35 contrats de loyer</li>
+                        <li>💰 14 financements</li>
+                        <li>📈 16 valorisations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions d'accès -->
+        <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h2 class="text-xl font-bold text-blue-800 mb-4">🌐 Accès aux Données</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="font-semibold text-blue-700 mb-2">📡 API Backend (Port 8000)</h3>
+                    <ul class="space-y-1 text-sm text-blue-600">
+                        <li><code>/health</code> - Statut des services</li>
+                        <li><code>/api/v1/auth</code> - Authentification</li>
+                        <li><code>/api/v1/messages</code> - Messages</li>
+                        <li><code>/api/v1/exports</code> - Exports</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-blue-700 mb-2">🗄️ Base de Données (Port 8081)</h3>
+                    <p class="text-sm text-blue-600 mb-2">Accès Adminer :</p>
+                    <ul class="space-y-1 text-sm text-blue-600">
+                        <li>Serveur : <code>db</code></li>
+                        <li>Utilisateur : <code>postgres</code></li>
+                        <li>Mot de passe : <code>postgres</code></li>
+                        <li>Base : <code>base_app</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vérifier le statut du backend
+        fetch('http://localhost:8000/health')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Backend status:', data);
+            })
+            .catch(error => {
+                console.error('Backend non accessible:', error);
+            });
+    </script>
+</body>
+</html>
