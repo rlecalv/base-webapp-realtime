@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -35,6 +36,7 @@ interface SyntheseGlobale {
 }
 
 export default function PatrimoinePage() {
+  const router = useRouter();
   const [actifs, setActifs] = useState<ActifPatrimoine[]>([]);
   const [synthese, setSynthese] = useState<SyntheseGlobale | null>(null);
   const [loading, setLoading] = useState(true);
@@ -209,21 +211,36 @@ export default function PatrimoinePage() {
 
       {/* Actions */}
       <div className="flex flex-wrap gap-4 mb-8">
-        <Button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+        <Button 
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+          onClick={() => router.push('/patrimoine/new')}
+        >
           <div className="w-4 h-4 bg-white rounded-sm opacity-90 mr-2"></div>
           Nouvel Actif
         </Button>
-        <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+        <Button 
+          variant="outline" 
+          className="border-blue-200 text-blue-700 hover:bg-blue-50"
+          onClick={() => router.push('/locataires')}
+        >
           <div className="w-4 h-4 bg-blue-500 rounded-sm opacity-90 mr-2"></div>
           Gestion Locataires
         </Button>
-        <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+        <Button 
+          variant="outline" 
+          className="border-blue-200 text-blue-700 hover:bg-blue-50"
+          onClick={() => router.push('/societes')}
+        >
           <div className="w-4 h-4 bg-blue-500 rounded-sm opacity-90 mr-2"></div>
           Gestion Sociétés
         </Button>
-        <Button variant="outline" className="border-blue-200 text-blue-700 hover:bg-blue-50">
+        <Button 
+          variant="outline" 
+          className="border-blue-200 text-blue-700 hover:bg-blue-50"
+          onClick={() => router.push('/financements')}
+        >
           <div className="w-4 h-4 bg-blue-500 rounded-sm opacity-90 mr-2"></div>
-          Gestion Dettes
+          Gestion Financements
         </Button>
       </div>
 
@@ -306,16 +323,24 @@ export default function PatrimoinePage() {
                       {formatPercentage(actif.ratio_endettement)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    <div className="flex gap-2 justify-center">
-                      <Button size="sm" variant="outline">
-                        👁️ Voir
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        ✏️ Modifier
-                      </Button>
-                    </div>
-                  </td>
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex gap-2 justify-center">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => router.push(`/patrimoine/${actif.id}`)}
+                          >
+                            👁️ Voir
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => router.push(`/patrimoine/${actif.id}/edit`)}
+                          >
+                            ✏️ Modifier
+                          </Button>
+                        </div>
+                      </td>
                 </tr>
               ))}
             </tbody>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -28,6 +29,7 @@ interface Societe {
 }
 
 export default function SocietesPage() {
+  const router = useRouter();
   const [societes, setSocietes] = useState<Societe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -102,7 +104,10 @@ export default function SocietesPage() {
 
         {/* Actions */}
         <div className="flex flex-wrap gap-4 mb-8">
-          <ActionButton variant="primary">
+          <ActionButton 
+            variant="primary"
+            onClick={() => router.push('/societes/new')}
+          >
             Nouvelle Société
           </ActionButton>
           <ActionButton>
@@ -201,10 +206,19 @@ export default function SocietesPage() {
 
             {/* Actions */}
             <div className="flex gap-2">
-              <Button size="sm" className="flex-1">
+              <Button 
+                size="sm" 
+                className="flex-1"
+                onClick={() => router.push(`/societes/${societe.id}`)}
+              >
                 👁️ Détail
               </Button>
-              <Button size="sm" variant="outline" className="flex-1">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => router.push(`/societes/${societe.id}/edit`)}
+              >
                 ✏️ Modifier
               </Button>
               <Button size="sm" variant="outline">
