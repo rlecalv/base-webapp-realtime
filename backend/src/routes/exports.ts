@@ -202,12 +202,28 @@ router.get('/statistics',
       
       const result = await exportService.exportStatistics(format as string);
 
-      if (format === 'pdf') {
+      // Détecter si c'est un fallback (fichier Excel alors que PDF était demandé)
+      const isFallback = format === 'pdf' && result.filename.includes('.xlsx');
+      
+      if (result.buffer) {
+        // Fichier PDF
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
         res.send(result.buffer);
         return;
       } else {
+        // Fichier Excel/CSV
+        const contentType = result.filename.endsWith('.xlsx') 
+          ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          : 'text/csv';
+        
+        if (isFallback) {
+          // Ajouter un header pour indiquer le fallback
+          res.setHeader('X-Export-Fallback', 'true');
+          res.setHeader('X-Export-Original-Format', 'pdf');
+          res.setHeader('X-Export-Actual-Format', 'excel');
+        }
+        
         res.download(result.filepath, result.filename, (err: any) => {
           if (err) {
             console.error('Erreur lors du téléchargement:', err);

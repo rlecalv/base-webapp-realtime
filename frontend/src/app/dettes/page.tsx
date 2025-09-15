@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
+import PatrimoineLayout from '@/components/layouts/PatrimoineLayout';
 
 interface Dette {
   id: number;
@@ -107,7 +108,8 @@ export default function DettesPage() {
   const totalMensualites = dettes.reduce((sum, dette) => sum + dette.mensualite, 0);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <PatrimoineLayout>
+      <div className="container mx-auto px-4 py-8">
       {/* En-tête */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
@@ -245,6 +247,7 @@ export default function DettesPage() {
           </table>
         </div>
       </Card>
-    </div>
+      </div>
+    </PatrimoineLayout>
   );
 }

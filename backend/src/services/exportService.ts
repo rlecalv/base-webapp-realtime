@@ -33,19 +33,34 @@ class ExportService {
 
   private async getBrowser(): Promise<Browser> {
     if (!this.browser) {
-      this.browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--single-process',
-          '--disable-gpu'
-        ]
-      });
+      try {
+        this.browser = await puppeteer.launch({
+          headless: true,
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu',
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
+            '--disable-background-timer-throttling',
+            '--disable-renderer-backgrounding',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-ipc-flooding-protection',
+            '--font-render-hinting=none'
+          ],
+          executablePath: process.env.CHROME_BIN || puppeteer.executablePath(),
+          timeout: 30000
+        });
+        console.log('Navigateur Puppeteer lancé avec succès');
+      } catch (error: any) {
+        console.error('Erreur lors du lancement de Puppeteer:', error);
+        throw new Error(`Impossible de lancer le navigateur: ${error.message}`);
+      }
     }
     return this.browser;
   }
@@ -300,7 +315,21 @@ class ExportService {
 
       switch (format.toLowerCase()) {
         case 'pdf':
-          return await this.exportToPDF(statisticsData, 'statistics');
+          try {
+            return await this.exportToPDF(statisticsData, 'statistics');
+          } catch (pdfError: any) {
+            console.error('Erreur PDF, fallback vers Excel:', pdfError);
+            // Fallback vers Excel si PDF échoue
+            const excelData = {
+              sheets: {
+                'Statistiques Utilisateurs': [userStats],
+                'Statistiques Messages': [messageStats]
+              }
+            };
+            const result = await this.exportToExcel(excelData, 'Statistiques', `statistiques_${moment().format('YYYY-MM-DD')}.xlsx`);
+            console.log('Fallback Excel réussi pour les statistiques');
+            return result;
+          }
         case 'excel':
           const excelData = {
             sheets: {

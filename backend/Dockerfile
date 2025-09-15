@@ -50,7 +50,8 @@ RUN apk add --no-cache \
 
 # Variables d'environnement pour Puppeteer
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
+    CHROME_BIN=/usr/bin/chromium-browser
 
 # Copier les dépendances de production
 COPY --from=build --chown=nodejs:nodejs /app/node_modules ./node_modules

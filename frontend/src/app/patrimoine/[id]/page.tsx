@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
+import PatrimoineLayout from '@/components/layouts/PatrimoineLayout';
 
 interface DetailPatrimoine {
   actif_id: number;
@@ -113,7 +114,8 @@ export default function DetailPatrimoinePage() {
   const actif = details[0]; // Premier enregistrement pour les infos générales
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <PatrimoineLayout>
+      <div className="container mx-auto px-4 py-8">
       {/* En-tête */}
       <div className="flex justify-between items-start mb-8">
         <div>
@@ -304,6 +306,7 @@ export default function DetailPatrimoinePage() {
           </div>
         </Card>
       )}
-    </div>
+      </div>
+    </PatrimoineLayout>
   );
 }

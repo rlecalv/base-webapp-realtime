@@ -41,6 +41,8 @@ interface Echeance {
   action_requise: string;
 }
 
+import PatrimoineLayout from '@/components/layouts/PatrimoineLayout';
+
 export default function DashboardPage() {
   const [synthese, setSynthese] = useState<SyntheseGlobale | null>(null);
   const [topActifs, setTopActifs] = useState<TopActif[]>([]);
@@ -119,7 +121,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <PatrimoineLayout>
+      <div className="container mx-auto px-4 py-8">
       {/* En-tête */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
@@ -446,6 +449,6 @@ export default function DashboardPage() {
           </Card>
         </Link>
       </div>
-    </div>
+    </PatrimoineLayout>
   );
 }
