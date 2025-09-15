@@ -6,29 +6,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
-import {
-  BanknotesIcon,
-  CurrencyEuroIcon,
-  HomeIcon,
-  ChartBarIcon,
-  BuildingOfficeIcon,
-  UsersIcon,
-  DocumentTextIcon,
-  BanknotesIcon as CashIcon,
-  ExclamationTriangleIcon,
-  LightBulbIcon,
-  CalendarIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  TrophyIcon,
-  RectangleStackIcon
-} from '@heroicons/react/24/outline';
-import {
-  BanknotesIcon as BanknotesIconSolid,
-  CurrencyEuroIcon as CurrencyEuroIconSolid,
-  HomeIcon as HomeIconSolid,
-  ChartBarIcon as ChartBarIconSolid
-} from '@heroicons/react/24/solid';
 
 interface SyntheseGlobale {
   nb_societes: number;
@@ -159,20 +136,19 @@ export default function DashboardPage() {
   return (
     <PatrimoineLayout>
       <div className="container mx-auto px-4 py-8">
-      {/* En-tête moderne */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl">
-            <ChartBarIconSolid className="h-8 w-8 text-white" />
+      {/* En-tête élégant */}
+      <div className="mb-12">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-6 shadow-lg">
+            <div className="w-8 h-8 bg-white rounded-lg opacity-90"></div>
           </div>
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-              Tableau de Bord Patrimonial
-            </h1>
-            <p className="text-gray-600 text-lg">
-              Vue d'ensemble de votre portefeuille immobilier
-            </p>
-          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            Tableau de Bord Patrimonial
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Vue d'ensemble complète de votre portefeuille immobilier
+          </p>
+          <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto mt-6 rounded-full"></div>
         </div>
       </div>
 
