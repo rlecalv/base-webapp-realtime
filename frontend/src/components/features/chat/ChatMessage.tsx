@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import { Message } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatTime } from '@/lib/utils';
-import { Button } from './ui/Button';
+import { Button, Input } from '../../ui';
 import { Edit2, Trash2, Check, X } from 'lucide-react';
-import { Input } from './ui/Input';
 
 interface ChatMessageProps {
   message: Message;

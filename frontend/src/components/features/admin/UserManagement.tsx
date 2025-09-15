@@ -1,12 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DataTable } from './ui/DataTable';
-import { Modal } from './ui/Modal';
-import { FormInput } from './ui/FormInput';
-import { Button } from './ui/Button';
-import { Badge } from './ui/Badge';
-import { Avatar } from './ui/Avatar';
+import { DataTable, Modal, FormInput, Button, Badge, Avatar } from '../../ui';
 import { useSocket } from '@/contexts/SocketContext';
 import { useAuth } from '@/contexts/AuthContext';
 

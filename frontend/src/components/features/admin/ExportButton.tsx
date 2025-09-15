@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from './ui/Button';
+import { Button } from '../../ui';
 import { ExportDialog } from './ExportDialog';
 
 interface ExportButtonProps {

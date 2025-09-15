@@ -1,13 +1,15 @@
-const express = require('express');
+import express, { Request, Response, NextFunction } from 'express';
+import exportService from '../services/exportService';
+import auth from '../middleware/auth';
+import { body, query, validationResult } from 'express-validator';
+import * as path from 'path';
+import { promises as fs } from 'fs';
+import { AuthenticatedRequest } from '../types';
+
 const router = express.Router();
-const exportService = require('../services/exportService');
-const auth = require('../middleware/auth');
-const { body, query, validationResult } = require('express-validator');
-const path = require('path');
-const fs = require('fs').promises;
 
 // Middleware de validation des erreurs
-const handleValidationErrors = (req, res, next) => {
+const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -20,7 +22,7 @@ const handleValidationErrors = (req, res, next) => {
 };
 
 // Middleware pour vérifier les permissions admin (pour certains exports)
-const requireAdmin = (req, res, next) => {
+const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   if (!req.user.is_admin) {
     return res.status(403).json({
       success: false,
@@ -71,7 +73,7 @@ router.get('/users',
       .withMessage('isAdmin doit être un booléen'),
   ],
   handleValidationErrors,
-  async (req, res) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     try {
       const { format = 'excel', dateFrom, dateTo, isActive, isAdmin } = req.query;
       
@@ -399,4 +401,4 @@ router.get('/health', auth, requireAdmin, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

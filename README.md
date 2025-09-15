@@ -238,8 +238,47 @@ cd backend && npm test
 # Frontend
 cd frontend && npm test
 
+# Test des fonctionnalités d'export
+node test_exports.js
+
 # Ou via Makefile
 make test
+```
+
+## 📊 Fonctionnalités d'Export
+
+L'application inclut un système d'export complet permettant d'exporter les données en plusieurs formats :
+
+### Formats Supportés
+- **PDF** - Documents formatés avec Puppeteer
+- **Excel (XLSX)** - Feuilles de calcul avec formatage
+- **CSV** - Données tabulaires simples
+
+### Types d'Export
+- **Utilisateurs** - Liste complète avec filtres (statut, rôle, dates)
+- **Messages** - Historique des conversations avec filtres
+- **Statistiques** - Rapports complets de l'application
+- **Export personnalisé** - Données custom avec templates
+
+### Utilisation Frontend
+Les boutons d'export sont intégrés dans :
+- Page d'administration (utilisateurs et statistiques)
+- Page de chat (messages)
+- Interface modale avec filtres avancés
+
+### API d'Export
+```javascript
+// Exemple d'utilisation de l'API d'export
+import { exportsApi } from '@/lib/api';
+
+// Export des utilisateurs en Excel
+const blob = await exportsApi.exportUsers('excel', {
+  isActive: true,
+  dateFrom: '2024-01-01'
+});
+
+// Téléchargement automatique
+downloadBlob(blob, 'utilisateurs.xlsx');
 ```
 
 ## 📝 Développement

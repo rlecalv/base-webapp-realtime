@@ -1,19 +1,28 @@
-const puppeteer = require('puppeteer');
-const XLSX = require('xlsx');
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-const moment = require('moment');
-const path = require('path');
-const fs = require('fs').promises;
-const { User, Message, sequelize } = require('../models');
+import puppeteer, { Browser, Page } from 'puppeteer';
+import * as XLSX from 'xlsx';
+import { createObjectCsvWriter } from 'csv-writer';
+import * as moment from 'moment';
+import * as path from 'path';
+import { promises as fs } from 'fs';
+import { User, Message, sequelize } from '../models';
+import { 
+  ExportFilters, 
+  ExportResult, 
+  UserStatistics, 
+  MessageStatistics,
+  PuppeteerOptions 
+} from '../types';
 
 class ExportService {
+  private browser: Browser | null = null;
+  private exportsDir: string;
+
   constructor() {
-    this.browser = null;
     this.exportsDir = path.join(__dirname, '../../exports');
     this.initializeExportsDirectory();
   }
 
-  async initializeExportsDirectory() {
+  private async initializeExportsDirectory(): Promise<void> {
     try {
       await fs.access(this.exportsDir);
     } catch {
@@ -21,7 +30,7 @@ class ExportService {
     }
   }
 
-  async getBrowser() {
+  private async getBrowser(): Promise<Browser> {
     if (!this.browser) {
       this.browser = await puppeteer.launch({
         headless: 'new',
@@ -40,7 +49,7 @@ class ExportService {
     return this.browser;
   }
 
-  async closeBrowser() {
+  private async closeBrowser(): Promise<void> {
     if (this.browser) {
       await this.browser.close();
       this.browser = null;
@@ -48,7 +57,7 @@ class ExportService {
   }
 
   // Export PDF via Puppeteer
-  async exportToPDF(data, template = 'default', options = {}) {
+  async exportToPDF(data: any, template: string = 'default', options: PuppeteerOptions = {}): Promise<ExportResult> {
     const browser = await this.getBrowser();
     const page = await browser.newPage();
 
@@ -90,7 +99,7 @@ class ExportService {
   }
 
   // Export Excel (XLSX)
-  async exportToExcel(data, sheetName = 'Export', filename = null) {
+  async exportToExcel(data: any, sheetName: string = 'Export', filename: string | null = null): Promise<ExportResult> {
     try {
       const workbook = XLSX.utils.book_new();
       
@@ -125,7 +134,7 @@ class ExportService {
   }
 
   // Export CSV
-  async exportToCSV(data, filename = null, headers = null) {
+  async exportToCSV(data: any[], filename: string | null = null, headers: any[] | null = null): Promise<ExportResult> {
     try {
       if (!Array.isArray(data) || data.length === 0) {
         throw new Error('Les données doivent être un tableau non vide');
@@ -160,7 +169,7 @@ class ExportService {
   }
 
   // Méthodes spécifiques pour les données de l'application
-  async exportUsers(format = 'excel', filters = {}) {
+  async exportUsers(format: string = 'excel', filters: ExportFilters = {}): Promise<ExportResult> {
     try {
       const whereClause = {};
       
@@ -211,7 +220,7 @@ class ExportService {
     }
   }
 
-  async exportMessages(format = 'excel', filters = {}) {
+  async exportMessages(format: string = 'excel', filters: ExportFilters = {}): Promise<ExportResult> {
     try {
       const whereClause = {};
       
@@ -273,7 +282,7 @@ class ExportService {
     }
   }
 
-  async exportStatistics(format = 'pdf') {
+  async exportStatistics(format: string = 'pdf'): Promise<ExportResult> {
     try {
       // Récupérer les statistiques
       const [userStats, messageStats] = await Promise.all([
@@ -308,7 +317,7 @@ class ExportService {
     }
   }
 
-  async getUserStatistics() {
+  private async getUserStatistics(): Promise<UserStatistics> {
     const [totalUsers, activeUsers, adminUsers, recentUsers] = await Promise.all([
       User.count(),
       User.count({ where: { is_active: true } }),
@@ -330,7 +339,7 @@ class ExportService {
     };
   }
 
-  async getMessageStatistics() {
+  private async getMessageStatistics(): Promise<MessageStatistics> {
     const [totalMessages, recentMessages, messagesByType] = await Promise.all([
       Message.count(),
       Message.count({
@@ -361,7 +370,7 @@ class ExportService {
     };
   }
 
-  generateHTML(data, template) {
+  private generateHTML(data: any, template: string): string {
     const baseStyles = `
       <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
@@ -553,7 +562,7 @@ class ExportService {
   }
 
   // Nettoyage des fichiers d'export anciens
-  async cleanupOldExports(daysOld = 7) {
+  async cleanupOldExports(daysOld: number = 7): Promise<void> {
     try {
       const files = await fs.readdir(this.exportsDir);
       const cutoffDate = moment().subtract(daysOld, 'days');
@@ -573,4 +582,4 @@ class ExportService {
   }
 }
 
-module.exports = new ExportService();
+export default new ExportService();

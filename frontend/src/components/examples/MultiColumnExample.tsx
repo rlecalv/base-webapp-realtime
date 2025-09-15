@@ -1,12 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MultiColumnLayout, EmailLayout, DashboardLayout, ProjectManagementLayout } from './ui/MultiColumnLayout';
-import { Button } from './ui/Button';
-import { Badge } from './ui/Badge';
-import { Avatar } from './ui/Avatar';
-import { Card } from './ui/Card';
-import { DataTable } from './ui/DataTable';
+import { MultiColumnLayout, EmailLayout, DashboardLayout, ProjectManagementLayout } from '../layouts/MultiColumnLayout';
+import { Button, Badge, Avatar, Card, DataTable } from '../ui';
 import { 
   HomeIcon,
   UsersIcon,

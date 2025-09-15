@@ -5,15 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocket } from '@/contexts/SocketContext';
 import { messagesApi } from '@/lib/api';
-import { ChatMessage } from '@/components/ChatMessage';
-import { ChatInput } from '@/components/ChatInput';
-import { TypingIndicator } from '@/components/TypingIndicator';
-import { UserList } from '@/components/UserList';
-import { Button } from '@/components/ui/Button';
-import { ExportButton } from '@/components/ExportButton';
+import { ChatMessage, ChatInput, TypingIndicator, UserList } from '@/components/features/chat';
+import { Button, FormInput, Avatar } from '@/components/ui';
+import { ExportButton } from '@/components/features/admin';
 import { LogOut, MessageCircle, Settings } from 'lucide-react';
-import { FormInput } from '@/components/ui/FormInput';
-import { Avatar } from '@/components/ui/Avatar';
 import toast from 'react-hot-toast';
 
 export default function ChatPage() {

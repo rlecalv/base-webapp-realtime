@@ -3,9 +3,8 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserManagement } from '@/components/UserManagement';
-import { Button } from '@/components/ui/Button';
-import { ExportButton } from '@/components/ExportButton';
+import { UserManagement, ExportButton } from '@/components/features/admin';
+import { Button } from '@/components/ui';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function AdminPage() {

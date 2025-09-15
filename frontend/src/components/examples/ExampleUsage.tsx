@@ -1,18 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AppShell } from './ui/AppShell';
-import { DataTable } from './ui/DataTable';
-import { Modal } from './ui/Modal';
-import { FormInput } from './ui/FormInput';
-import { Button } from './ui/Button';
-import { Badge } from './ui/Badge';
-import { Avatar } from './ui/Avatar';
-import { Alert } from './ui/Alert';
-import { Dropdown, SimpleDropdown } from './ui/Dropdown';
-import { Notification, useNotification } from './ui/Notification';
-import { LoadingSpinner, InlineLoading } from './ui/LoadingSpinner';
-import { EmptyState } from './ui/EmptyState';
+import { AppShell } from '../layouts/AppShell';
+import { DataTable, Modal, FormInput, Button, Badge, Avatar, Alert, Dropdown, SimpleDropdown, Notification, useNotification, LoadingSpinner, InlineLoading, EmptyState } from '../ui';
 import { 
   UserIcon, 
   CogIcon, 
