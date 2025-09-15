@@ -212,11 +212,11 @@ export default function DettesPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <span className={`font-medium ${getRisqueColor(dette.pourcentage_restant)}`}>
-                      {dette.pourcentage_restant.toFixed(1)}%
+                      {dette.pourcentage_restant ? Number(dette.pourcentage_restant).toFixed(1) : '0.0'}%
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    {dette.taux_interet.toFixed(2)}%
+                    {dette.taux_interet ? Number(dette.taux_interet).toFixed(2) : '0.00'}%
                   </td>
                   <td className="px-4 py-3 text-right font-medium">
                     {formatCurrency(dette.mensualite)}

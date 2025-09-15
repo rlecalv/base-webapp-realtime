@@ -146,11 +146,11 @@ export default function DetailPatrimoinePage() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Surface totale :</span>
-              <span className="font-medium">{actif.surface_totale?.toFixed(0)} m²</span>
+              <span className="font-medium">{actif.surface_totale ? Number(actif.surface_totale).toFixed(0) : '0'} m²</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Surface louable :</span>
-              <span className="font-medium">{actif.surface_louable?.toFixed(0)} m²</span>
+              <span className="font-medium">{actif.surface_louable ? Number(actif.surface_louable).toFixed(0) : '0'} m²</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Nombre de lots :</span>
@@ -178,7 +178,7 @@ export default function DetailPatrimoinePage() {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Prix au m² :</span>
-              <span className="font-medium">{actif.prix_m2?.toFixed(0)} €/m²</span>
+              <span className="font-medium">{actif.prix_m2 ? Number(actif.prix_m2).toFixed(0) : '0'} €/m²</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Revenus bruts :</span>
@@ -199,7 +199,7 @@ export default function DetailPatrimoinePage() {
             <div className="flex justify-between">
               <span className="text-gray-600">Rentabilité nette :</span>
               <span className="font-medium text-green-600">
-                {actif.rentabilite_nette?.toFixed(2)}%
+                {actif.rentabilite_nette ? Number(actif.rentabilite_nette).toFixed(2) : '0.00'}%
               </span>
             </div>
             <div className="flex justify-between">
@@ -208,7 +208,7 @@ export default function DetailPatrimoinePage() {
                 actif.ratio_endettement_calcule <= 50 ? 'text-green-600' :
                 actif.ratio_endettement_calcule <= 80 ? 'text-yellow-600' : 'text-red-600'
               }`}>
-                {actif.ratio_endettement_calcule?.toFixed(2)}%
+                {actif.ratio_endettement_calcule ? Number(actif.ratio_endettement_calcule).toFixed(2) : '0.00'}%
               </span>
             </div>
             <div className="flex justify-between">
@@ -297,12 +297,13 @@ export default function DetailPatrimoinePage() {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-600">Taux d'intérêt :</span>
-                <span className="font-medium">{actif.taux_interet?.toFixed(2)}%</span>
+                <span className="font-medium">{actif.taux_interet ? Number(actif.taux_interet).toFixed(2) : '0.00'}%</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">% remboursé :</span>
                 <span className="font-medium text-green-600">
-                  {((1 - actif.capital_restant_du / actif.montant_emprunte) * 100).toFixed(1)}%
+                  {actif.capital_restant_du && actif.montant_emprunte ? 
+                    ((1 - actif.capital_restant_du / actif.montant_emprunte) * 100).toFixed(1) : '0.0'}%
                 </span>
               </div>
             </div>

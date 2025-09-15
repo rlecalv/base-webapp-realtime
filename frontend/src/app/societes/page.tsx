@@ -195,7 +195,7 @@ export default function SocietesPage() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-gray-800">
-                    {societe.surface_totale_patrimoine?.toFixed(0)}
+                    {societe.surface_totale_patrimoine ? Number(societe.surface_totale_patrimoine).toFixed(0) : '0'}
                   </div>
                   <div className="text-xs text-gray-500">m²</div>
                 </div>
