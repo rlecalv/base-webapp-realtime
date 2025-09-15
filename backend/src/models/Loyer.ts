@@ -28,6 +28,7 @@ interface LoyerAttributes {
   etat_lieux_sortie?: string;
   frais_agence?: number;
   commission_gestion?: number;
+  taux_capitalisation?: number;
   notes?: string;
   actif: boolean;
   created_at?: Date;
@@ -63,6 +64,7 @@ class Loyer extends Model<LoyerAttributes, LoyerCreationAttributes> implements L
   public etat_lieux_sortie?: string;
   public frais_agence?: number;
   public commission_gestion?: number;
+  public taux_capitalisation?: number;
   public notes?: string;
   public actif!: boolean;
   
@@ -202,6 +204,11 @@ Loyer.init(
       type: DataTypes.DECIMAL(5, 2),
       allowNull: true,
       comment: 'Pourcentage de commission',
+    },
+    taux_capitalisation: {
+      type: DataTypes.DECIMAL(5, 2),
+      allowNull: true,
+      comment: 'Taux de capitalisation en pourcentage',
     },
     notes: {
       type: DataTypes.TEXT,
