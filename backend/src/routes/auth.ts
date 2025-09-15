@@ -196,7 +196,7 @@ router.post('/login', authLimiter, validateLogin, handleValidationErrors, async 
 });
 
 // Vérifier le token
-router.get('/verify', auth, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+router.post('/verify-token', auth, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
   try {
     const user = await User.findByPk(req.user?.id);
     
@@ -222,8 +222,8 @@ router.get('/verify', auth, async (req: AuthenticatedRequest, res: Response): Pr
   }
 });
 
-// Profil utilisateur
-router.get('/profile', auth, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+// Profil utilisateur (alias pour /me)
+router.get('/me', auth, async (req: AuthenticatedRequest, res: Response): Promise<any> => {
   try {
     const user = await User.findByPk(req.user?.id);
     

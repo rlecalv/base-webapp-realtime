@@ -55,12 +55,12 @@ export const authApi = {
   },
 
   getProfile: async (): Promise<{ user: User }> => {
-    const response = await api.get('/auth/me');
+    const response = await api.get('/auth/profile');
     return response.data;
   },
 
   verifyToken: async (): Promise<{ valid: boolean; user: User }> => {
-    const response = await api.post('/auth/verify-token');
+    const response = await api.get('/auth/verify');
     return response.data;
   },
 };

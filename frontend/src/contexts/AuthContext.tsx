@@ -53,9 +53,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             } else {
               removeAuthToken();
             }
-          } catch (error) {
-            console.error('Token invalide:', error);
-            removeAuthToken();
+          } catch (error: any) {
+            // Gestion silencieuse des erreurs de token invalide
+            if (error.response?.status === 401 || error.code === 'ERR_NETWORK') {
+              removeAuthToken();
+            } else {
+              console.error('Erreur lors de la vérification du token:', error);
+              removeAuthToken();
+            }
           }
         }
       } catch (error) {
