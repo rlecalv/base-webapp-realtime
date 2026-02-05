@@ -137,4 +137,6 @@ acme.json
 # Données DVF (fichiers CSV volumineux)
 backend/data/
 data/
-*.csv
+*.csv__pycache__/
+*.pyc
+.env
