@@ -6,7 +6,7 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { cn } from '@/lib/utils';
 
 interface DropdownItem {
-  label: string;
+  label?: string;
   onClick?: () => void;
   href?: string;
   icon?: React.ComponentType<{ className?: string }>;

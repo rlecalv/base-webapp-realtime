@@ -8,7 +8,7 @@ interface ExportButtonProps {
   exportType: 'users' | 'messages' | 'statistics';
   title?: string;
   description?: string;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'default' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   children?: React.ReactNode;
@@ -24,6 +24,9 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
   children
 }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  
+  // Mapper 'md' vers 'default' car Button n'accepte pas 'md'
+  const buttonSize = size === 'md' ? 'default' : size;
 
   const getDefaultTitle = () => {
     switch (exportType) {
@@ -55,7 +58,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({
     <>
       <Button
         variant={variant}
-        size={size}
+        size={buttonSize}
         onClick={() => setIsDialogOpen(true)}
         className={className}
       >

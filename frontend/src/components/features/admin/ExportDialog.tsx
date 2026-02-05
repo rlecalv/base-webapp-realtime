@@ -218,11 +218,11 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
         )}
 
         {error && (
-          <Alert type="error" message={error} />
+          <Alert type="error" title={error} />
         )}
 
         {success && (
-          <Alert type="success" message={success} />
+          <Alert type="success" title={success} />
         )}
 
         {/* Sélection du format */}

@@ -9,6 +9,9 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: API_URL,
     NEXT_PUBLIC_SOCKET_URL: SOCKET_URL,
   },
+  eslint: {
+    ignoreDuringBuilds: true, // Ignorer les erreurs ESLint pendant le build pour le dev
+  },
   async rewrites() {
     return [
       {

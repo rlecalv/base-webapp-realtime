@@ -42,9 +42,9 @@ export default function ChatPage() {
           console.log('Messages API response:', response);
           
           // Vérifier que la réponse contient des messages
-          if (response && response.messages && Array.isArray(response.messages)) {
+          if (response && response.data && Array.isArray(response.data)) {
             // Ajouter tous les messages en une seule fois pour éviter les doublons
-            response.messages.forEach(message => addMessage(message));
+            response.data.forEach(message => addMessage(message));
           } else {
             console.warn('Format de réponse inattendu:', response);
           }

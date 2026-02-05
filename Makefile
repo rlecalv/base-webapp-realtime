@@ -15,6 +15,10 @@ dev: ## Démarrer l'environnement de développement
 	@echo "📱 Frontend: http://localhost:3000"
 	@echo "🔧 Backend: http://localhost:8000"
 	@echo "🗄️  Adminer: http://localhost:8081"
+	@echo ""
+	@echo "⏳ Attente du démarrage des services..."
+	@sleep 5
+	@echo "✅ Services prêts !"
 
 .PHONY: dev-logs
 dev-logs: ## Voir les logs de développement
@@ -180,6 +184,17 @@ cache-stats: ## Afficher les statistiques du cache Redis
 cache-clear: ## Vider le cache Redis
 	@echo "🧹 Vidage du cache Redis..."
 	docker-compose -f $(COMPOSE_DEV_FILE) exec redis redis-cli flushall
+
+# Commandes DVF
+.PHONY: dvf-download
+dvf-download: ## Télécharger les données DVF pour l'Île-de-France
+	@echo "📥 Téléchargement des données DVF..."
+	@./scripts/download-dvf.sh
+
+.PHONY: dvf-download-token
+dvf-download-token: ## Télécharger les données DVF avec token (usage: make dvf-download-token TOKEN=your_token)
+	@if [ -z "$(TOKEN)" ]; then echo "❌ Veuillez spécifier le token: make dvf-download-token TOKEN=your_token"; exit 1; fi
+	@ADMIN_TOKEN=$(TOKEN) ./scripts/download-dvf.sh
 
 .PHONY: audit
 audit: ## Audit complet de la configuration

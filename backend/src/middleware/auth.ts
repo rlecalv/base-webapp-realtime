@@ -44,4 +44,5 @@ const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFuncti
 };
 
 export { authenticateToken, requireAdmin };
+export type { AuthenticatedRequest } from '../types';
 export default authenticateToken;

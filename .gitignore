@@ -133,3 +133,8 @@ dump.rdb
 
 # Traefik
 acme.json
+
+# Données DVF (fichiers CSV volumineux)
+backend/data/
+data/
+*.csv

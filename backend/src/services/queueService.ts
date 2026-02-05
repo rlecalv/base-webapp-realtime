@@ -21,6 +21,10 @@ const dataProcessingQueue = new Queue('data processing', {
   redis: redisConfig
 });
 
+const scrapingQueue = new Queue('scraping', {
+  redis: redisConfig
+});
+
 // Jobs pour les emails
 emailQueue.process('send_welcome_email', async (job) => {
   const { userEmail, username } = job.data;
@@ -125,8 +129,49 @@ dataProcessingQueue.on('completed', (job, result) => {
   console.log(`✅ Job traitement données terminé: ${job.id}`);
 });
 
+// Jobs pour le scraping
+scrapingQueue.process('scraping', async (job) => {
+  const { jobId, site, type, parametres } = job.data;
+  
+  console.log(`🕷️ Exécution du job de scraping ${jobId} pour ${site}`);
+  
+  // Importer dynamiquement pour éviter les dépendances circulaires
+  const { executeScrapingJob } = await import('./scrapingService');
+  await executeScrapingJob(jobId);
+  
+  console.log(`✅ Job de scraping ${jobId} terminé`);
+  
+  return { success: true, jobId, site };
+});
+
+scrapingQueue.on('failed', (job, err) => {
+  console.error(`❌ Job scraping échoué: ${job.id}`, err);
+});
+
+scrapingQueue.on('completed', (job, result) => {
+  console.log(`✅ Job scraping terminé: ${job.id}`);
+});
+
+// Fonction helper pour ajouter un job
+export const addJob = async (queueName: string, jobData: any): Promise<any> => {
+  const queues: Record<string, any> = {
+    email: emailQueue,
+    notification: notificationQueue,
+    'data-processing': dataProcessingQueue,
+    scraping: scrapingQueue
+  };
+
+  const queue = queues[queueName];
+  if (!queue) {
+    throw new Error(`Queue ${queueName} non trouvée`);
+  }
+
+  return await queue.add(jobData);
+};
+
 export {
   emailQueue,
   notificationQueue,
-  dataProcessingQueue
+  dataProcessingQueue,
+  scrapingQueue
 };

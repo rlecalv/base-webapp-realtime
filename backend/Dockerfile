@@ -1,5 +1,5 @@
 # Multi-stage build optimisé pour le backend
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Installer les dépendances système communes
 RUN apk add --no-cache \

@@ -16,7 +16,10 @@ import redisClient from './config/redis';
 import authRoutes from './routes/auth';
 import messageRoutes from './routes/messages';
 import exportRoutes from './routes/exports';
-import patrimoineRoutes from './routes/patrimoine';
+import estimationRoutes from './routes/estimations';
+import leadRoutes from './routes/leads';
+import dvfRoutes from './routes/dvf';
+import scrapingRoutes from './routes/scraping';
 
 // Créer l'application Express
 const app = express();
@@ -88,12 +91,15 @@ app.get('/health', async (req, res) => {
 app.use(`/api/${config.app.apiVersion}/auth`, authRoutes);
 app.use(`/api/${config.app.apiVersion}/messages`, messageRoutes);
 app.use(`/api/${config.app.apiVersion}/exports`, exportRoutes);
-app.use(`/api/${config.app.apiVersion}`, patrimoineRoutes);
+app.use(`/api/${config.app.apiVersion}/estimations`, estimationRoutes);
+app.use(`/api/${config.app.apiVersion}/leads`, leadRoutes);
+app.use(`/api/${config.app.apiVersion}/dvf`, dvfRoutes);
+app.use(`/api/${config.app.apiVersion}/scraping`, scrapingRoutes);
 
 // Route par défaut
 app.get('/', (req, res) => {
   res.json({
-    name: 'Base WebApp API',
+    name: 'MonEstimation API',
     version: '1.0.0',
     status: 'running',
     endpoints: {
@@ -101,12 +107,9 @@ app.get('/', (req, res) => {
       auth: `/api/${config.app.apiVersion}/auth`,
       messages: `/api/${config.app.apiVersion}/messages`,
       exports: `/api/${config.app.apiVersion}/exports`,
-      patrimoine: `/api/${config.app.apiVersion}/patrimoine`,
-      locataires: `/api/${config.app.apiVersion}/locataires`,
-      societes: `/api/${config.app.apiVersion}/societes`,
-      dettes: `/api/${config.app.apiVersion}/dettes`,
-      synthese: `/api/${config.app.apiVersion}/synthese`,
-      echeances: `/api/${config.app.apiVersion}/echeances`,
+      estimations: `/api/${config.app.apiVersion}/estimations`,
+      leads: `/api/${config.app.apiVersion}/leads`,
+      dvf: `/api/${config.app.apiVersion}/dvf`,
       websocket: '/socket.io'
     }
   });

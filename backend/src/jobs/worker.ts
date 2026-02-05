@@ -1,4 +1,4 @@
-import { emailQueue, notificationQueue, dataProcessingQueue } from '../services/queueService';
+import { emailQueue, notificationQueue, dataProcessingQueue, scrapingQueue } from '../services/queueService';
 import { syncDatabase } from '../models';
 import redisClient from '../config/redis';
 
@@ -20,6 +20,7 @@ const startWorker = async () => {
     console.log('  - Email Queue');
     console.log('  - Notification Queue');
     console.log('  - Data Processing Queue');
+    console.log('  - Scraping Queue');
     
     // Programmer des tâches périodiques
     schedulePeriodicTasks();
@@ -54,6 +55,7 @@ process.on('SIGTERM', async () => {
     await emailQueue.close();
     await notificationQueue.close();
     await dataProcessingQueue.close();
+    await scrapingQueue.close();
     await redisClient.quit();
     
     console.log('✅ Worker arrêté proprement');
@@ -71,6 +73,7 @@ process.on('SIGINT', async () => {
     await emailQueue.close();
     await notificationQueue.close();
     await dataProcessingQueue.close();
+    await scrapingQueue.close();
     await redisClient.quit();
     
     console.log('✅ Worker interrompu proprement');

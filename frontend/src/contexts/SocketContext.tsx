@@ -55,6 +55,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     return () => {
       disconnectSocket();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user]);
 
   const connectSocket = async () => {
@@ -130,28 +131,30 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
           msg.id === updatedMessage.id ? updatedMessage : msg
         )
       );
-      toast.info('Message modifié');
+      toast('Message modifié');
     });
 
     // Message supprimé
     socketInstance.on('message_deleted', (data: { id: number }) => {
       setMessages(prev => prev.filter(msg => msg.id !== data.id));
-      toast.info('Message supprimé');
+      toast('Message supprimé');
     });
 
     // Utilisateur connecté
     socketInstance.on('user_connected', (data: WebSocketMessage) => {
       if (data.userId && data.username) {
+        const userId = data.userId;
+        const username = data.username;
         setConnectedUsers(prev => {
-          const exists = prev.some(u => u.userId === data.userId);
+          const exists = prev.some(u => u.userId === userId);
           if (!exists) {
-            return [...prev, { userId: data.userId, username: data.username }];
+            return [...prev, { userId, username }];
           }
           return prev;
         });
         
-        if (user && data.userId !== user.id) {
-          toast.success(`${data.username} s'est connecté`);
+        if (user && userId !== user.id) {
+          toast.success(`${username} s'est connecté`);
         }
       }
     });
@@ -159,10 +162,12 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     // Utilisateur déconnecté
     socketInstance.on('user_disconnected', (data: WebSocketMessage) => {
       if (data.userId && data.username) {
-        setConnectedUsers(prev => prev.filter(u => u.userId !== data.userId));
+        const userId = data.userId;
+        const username = data.username;
+        setConnectedUsers(prev => prev.filter(u => u.userId !== userId));
         
-        if (user && data.userId !== user.id) {
-          toast.info(`${data.username} s'est déconnecté`);
+        if (user && userId !== user.id) {
+          toast(`${username} s'est déconnecté`);
         }
       }
     });
@@ -170,12 +175,14 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     // Utilisateur en train de taper
     socketInstance.on('user_typing', (data: WebSocketMessage) => {
       if (data.userId && data.username && user && data.userId !== user.id) {
+        const userId = data.userId;
+        const username = data.username;
         setTypingUsers(prev => {
-          const filtered = prev.filter(u => u.userId !== data.userId);
+          const filtered = prev.filter(u => u.userId !== userId);
           if (data.isTyping) {
             return [...filtered, { 
-              userId: data.userId, 
-              username: data.username, 
+              userId, 
+              username, 
               isTyping: true 
             }];
           }
@@ -201,7 +208,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     socketInstance.on('disconnect', (reason: string) => {
       console.log('🔌 Socket déconnecté:', reason);
       setIsConnected(false);
-      toast.warning('Connexion temps réel interrompue');
+      toast('Connexion temps réel interrompue');
     });
   };
 

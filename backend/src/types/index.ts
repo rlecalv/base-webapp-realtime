@@ -35,6 +35,91 @@ export interface MessageAttributes {
   updated_at: Date;
 }
 
+// Types pour l'estimation immobilière
+export interface BienAttributes {
+  id: number;
+  type: 'immeuble_bloc' | 'appartement' | 'maison' | 'part_indivise';
+  adresse: string;
+  code_postal: string;
+  ville: string;
+  departement: string;
+  surface_totale: number;
+  nombre_lots?: number;
+  quote_part?: number;
+  annee_construction?: number;
+  etat_general: 'excellent' | 'bon' | 'moyen' | 'a_renover';
+  caracteristiques: Record<string, any>;
+  latitude?: number;
+  longitude?: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface EstimationAttributes {
+  id: number;
+  bien_id: number;
+  user_id?: number;
+  valeur_estimee: number;
+  valeur_min: number;
+  valeur_max: number;
+  methode: 'comparables_dvf' | 'comparables_offres' | 'mixte';
+  nombre_comparables: number;
+  confiance: number;
+  details: Record<string, any>;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ComparableAttributes {
+  id: number;
+  type: 'transaction' | 'offre';
+  source: 'dvf' | 'seloger' | 'leboncoin' | 'pap' | 'bienici' | 'logic-immo' | 'autre';
+  adresse: string;
+  code_postal: string;
+  ville: string;
+  surface: number;
+  prix: number;
+  prix_m2: number;
+  date_transaction?: Date;
+  date_publication?: Date;
+  url_source?: string;
+  caracteristiques: Record<string, any>;
+  distance_bien?: number;
+  latitude?: number;
+  longitude?: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface LeadAttributes {
+  id: number;
+  estimation_id: number;
+  email: string;
+  telephone?: string;
+  nom?: string;
+  prenom?: string;
+  type_bien_interesse?: string;
+  budget_max?: number;
+  statut: 'nouveau' | 'contacte' | 'convertis' | 'perdu';
+  notes?: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ScrapingJobAttributes {
+  id: number;
+  site: string;
+  type: 'annonces' | 'transactions';
+  statut: 'en_attente' | 'en_cours' | 'termine' | 'erreur';
+  parametres: Record<string, any>;
+  resultats?: Record<string, any>;
+  erreur?: string;
+  started_at?: Date;
+  completed_at?: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
 // Types pour les exports
 export interface ExportFilters {
   dateFrom?: string;

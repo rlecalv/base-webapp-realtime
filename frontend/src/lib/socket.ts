@@ -1,6 +1,5 @@
 import { io, Socket } from 'socket.io-client';
 import { getAuthToken } from './api';
-import { WebSocketMessage } from '@/types';
 
 class SocketManager {
   private socket: Socket | null = null;

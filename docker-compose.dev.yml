@@ -59,7 +59,6 @@ services:
       - base_app_dev_network
     volumes:
       - ./backend:/app
-      - /app/node_modules
     command: npm run dev
 
   # Worker Bull pour les tâches asynchrones (mode développement)
@@ -86,8 +85,30 @@ services:
       - base_app_dev_network
     volumes:
       - ./backend:/app
+    command: npm run worker
+
+  # Frontend Next.js (mode développement)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: base_app_frontend_dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_SOCKET_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - base_app_dev_network
+    volumes:
+      - ./frontend:/app
       - /app/node_modules
-    command: npx ts-node-dev src/jobs/worker.ts
+      - /app/.next
+    command: npm run dev
 
   # Adminer pour la gestion de base de données
   adminer:
