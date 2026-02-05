@@ -1,0 +1,95 @@
+# Docker Compose pour MonEstimation
+# Intégration avec le warehouse Horizon existant
+
+version: '3.8'
+
+services:
+  # Backend FastAPI (Python)
+  estimation-backend:
+    build:
+      context: ./backend-python
+      dockerfile: Dockerfile
+    container_name: estimation_backend
+    restart: unless-stopped
+    environment:
+      - ESTIMATION_DEBUG=false
+      - ESTIMATION_WAREHOUSE_HOST=${WAREHOUSE_HOST:-warehouse-db}
+      - ESTIMATION_WAREHOUSE_PORT=${WAREHOUSE_PORT:-5432}
+      - ESTIMATION_WAREHOUSE_DB=${WAREHOUSE_DB:-horizon_warehouse}
+      - ESTIMATION_WAREHOUSE_USER=${WAREHOUSE_USER:-postgres}
+      - ESTIMATION_WAREHOUSE_PASSWORD=${WAREHOUSE_PASSWORD:-postgres}
+      - ESTIMATION_REDIS_URL=redis://redis:6379/1
+      - ESTIMATION_CORS_ORIGINS=http://localhost:3000,https://vendremonimmeuble.fr,https://www.vendremonimmeuble.fr,https://estimermonimmeuble.fr,https://www.estimermonimmeuble.fr
+    ports:
+      - "8001:8001"
+    networks:
+      - estimation-network
+      - horizon-network  # Réseau partagé avec Horizon pour accès warehouse
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      # API backend
+      - "traefik.http.routers.estimation-api.rule=(Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`)) && PathPrefix(`/api`)"
+      - "traefik.http.routers.estimation-api.entrypoints=websecure"
+      - "traefik.http.routers.estimation-api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.estimation-api.loadbalancer.server.port=8001"
+
+  # Frontend Next.js
+  estimation-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: estimation_frontend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://vendremonimmeuble.fr
+    ports:
+      - "3001:3000"
+    depends_on:
+      - estimation-backend
+    networks:
+      - estimation-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      # Frontend
+      - "traefik.http.routers.estimation-front.rule=Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`)"
+      - "traefik.http.routers.estimation-front.entrypoints=websecure"
+      - "traefik.http.routers.estimation-front.tls.certresolver=letsencrypt"
+      - "traefik.http.services.estimation-front.loadbalancer.server.port=3000"
+
+  # Redis (cache)
+  redis:
+    image: redis:7-alpine
+    container_name: estimation_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - estimation-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+networks:
+  estimation-network:
+    driver: bridge
+  horizon-network:
+    external: true
+    name: horizon_network  # Réseau existant Horizon
+
+volumes:
+  redis_data:
+    driver: local

@@ -1,8 +1,9 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { AuthResponse, User, Message, ApiResponse, PaginatedResponse } from '@/types';
+import { AuthResponse, User, Message, ApiResponse, PaginatedResponse, Estimation, Comparable, Lead } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Backend FastAPI (port 8001)
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 const API_VERSION = 'v1';
 
 // Configuration d'Axios
@@ -193,6 +194,77 @@ export const removeAuthToken = () => {
 
 export const getAuthToken = (): string | undefined => {
   return Cookies.get('auth_token');
+};
+
+// API des estimations
+export const estimationsApi = {
+  createEstimation: async (data: any): Promise<ApiResponse<Estimation>> => {
+    const response = await api.post('/estimations', data);
+    return response.data;
+  },
+
+  getEstimation: async (id: number): Promise<ApiResponse<Estimation>> => {
+    const response = await api.get(`/estimations/${id}`);
+    return response.data;
+  },
+
+  getComparables: async (id: number, methode?: string): Promise<ApiResponse<Comparable[]>> => {
+    const params = methode ? `?methode=${methode}` : '';
+    const response = await api.get(`/estimations/${id}/comparables${params}`);
+    return response.data;
+  },
+
+  importDVF: async (id: number): Promise<ApiResponse<{ comparables_importes: number }>> => {
+    const response = await api.post(`/estimations/${id}/import-dvf`);
+    return response.data;
+  },
+};
+
+// API des leads
+export const leadsApi = {
+  createLead: async (data: any): Promise<ApiResponse<Lead>> => {
+    const response = await api.post('/leads', data);
+    return response.data;
+  },
+
+  getLeads: async (page = 1, limit = 50, statut?: string): Promise<PaginatedResponse<Lead>> => {
+    const params = new URLSearchParams();
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
+    if (statut) params.append('statut', statut);
+    
+    const response = await api.get(`/leads?${params.toString()}`);
+    return response.data;
+  },
+
+  getLead: async (id: number): Promise<ApiResponse<Lead>> => {
+    const response = await api.get(`/leads/${id}`);
+    return response.data;
+  },
+
+  updateLead: async (id: number, data: { statut?: string; notes?: string }): Promise<ApiResponse<Lead>> => {
+    const response = await api.patch(`/leads/${id}`, data);
+    return response.data;
+  },
+};
+
+// API DVF
+export const dvfApi = {
+  downloadIdf: async (): Promise<ApiResponse<{ comparables_importes: number }>> => {
+    const response = await api.post('/dvf/download-idf');
+    return response.data;
+  },
+
+  search: async (params: Record<string, any>): Promise<ApiResponse<Comparable[]>> => {
+    const queryParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        queryParams.append(key, String(value));
+      }
+    });
+    const response = await api.get(`/dvf/search?${queryParams.toString()}`);
+    return response.data;
+  },
 };
 
 export default api;
