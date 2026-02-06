@@ -137,7 +137,7 @@ export default function DetailSocietePage() {
               {societe.adresse && societe.ville ? `${societe.adresse}, ${societe.ville}` : 'Adresse non renseignée'}
             </p>
             <div className="flex gap-2 mt-2">
-              <Badge variant={societe.actif ? "success" : "secondary"}>
+              <Badge variant={societe.actif ? "success" : "warning"}>
                 {societe.actif ? 'Active' : 'Inactive'}
               </Badge>
               {societe.forme_juridique && (

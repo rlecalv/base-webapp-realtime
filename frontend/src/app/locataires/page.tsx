@@ -224,7 +224,7 @@ export default function LocatairesPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <Badge variant={locataire.actif ? "success" : "secondary"}>
+                        <Badge variant={locataire.actif ? "success" : "warning"}>
                           {locataire.actif ? 'Actif' : 'Inactif'}
                         </Badge>
                       </td>

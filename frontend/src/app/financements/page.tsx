@@ -243,7 +243,7 @@ export default function FinancementsPage() {
                         <Badge 
                           variant={
                             financement.statut === 'actif' ? 'success' :
-                            financement.statut === 'soldé' ? 'secondary' : 'warning'
+                            financement.statut === 'soldé' ? 'info' : 'warning'
                           }
                         >
                           {financement.statut}
