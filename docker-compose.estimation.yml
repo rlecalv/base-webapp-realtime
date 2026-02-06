@@ -92,7 +92,7 @@ networks:
     driver: bridge
   horizon-network:
     external: true
-    name: horizon_network
+    name: horizon-network
   traefik-network:
     external: true
     name: traefik-network
