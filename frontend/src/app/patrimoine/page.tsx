@@ -293,7 +293,7 @@ export default function PatrimoinePage() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <Badge variant="outline">{actif.societe_proprietaire}</Badge>
+                    <Badge>{actif.societe_proprietaire}</Badge>
                   </td>
                   <td className="px-4 py-3 text-right">
                     {actif.surface_totale ? `${Number(actif.surface_totale).toFixed(0)} m²` : '-'}

@@ -128,9 +128,9 @@ export default function SocietesPage() {
                 {societe.nom}
               </h3>
               <div className="flex flex-wrap gap-2 mb-2">
-                <Badge variant="outline">{societe.forme_juridique}</Badge>
+                <Badge>{societe.forme_juridique}</Badge>
                 {societe.siret && (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge className="text-xs">
                     SIRET: {societe.siret}
                   </Badge>
                 )}

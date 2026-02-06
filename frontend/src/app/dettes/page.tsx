@@ -195,7 +195,7 @@ export default function DettesPage() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <Badge variant="outline">{dette.organisme_preteur}</Badge>
+                    <Badge>{dette.organisme_preteur}</Badge>
                   </td>
                   <td className="px-4 py-3">
                     {dette.type_financement.replace('_', ' ')}

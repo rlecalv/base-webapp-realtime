@@ -212,7 +212,7 @@ export default function FinancementsPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge variant="outline">{financement.organisme_preteur}</Badge>
+                        <Badge>{financement.organisme_preteur}</Badge>
                       </td>
                       <td className="px-4 py-3 text-right font-medium">
                         {formatCurrency(financement.montant_emprunte)}

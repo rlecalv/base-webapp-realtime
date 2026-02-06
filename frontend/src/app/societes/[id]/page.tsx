@@ -141,7 +141,7 @@ export default function DetailSocietePage() {
                 {societe.actif ? 'Active' : 'Inactive'}
               </Badge>
               {societe.forme_juridique && (
-                <Badge variant="outline">{societe.forme_juridique}</Badge>
+                <Badge>{societe.forme_juridique}</Badge>
               )}
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function DetailSocietePage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge variant="outline">{actif.type_bien}</Badge>
+                        <Badge>{actif.type_bien}</Badge>
                       </td>
                       <td className="px-4 py-3 text-right font-medium">
                         {formatCurrency(actif.valorisation)}

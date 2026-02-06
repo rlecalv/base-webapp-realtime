@@ -209,7 +209,7 @@ export default function LocatairesPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge variant="outline">{locataire.profession || 'Non renseignée'}</Badge>
+                        <Badge>{locataire.profession || 'Non renseignée'}</Badge>
                       </td>
                       <td className="px-4 py-3 text-right">
                         <Badge>{locataire.nb_baux || 0}</Badge>

@@ -244,7 +244,7 @@ export default function DetailPatrimoinePage() {
                   <td className="px-4 py-2 font-medium">{detail.locataire_nom}</td>
                   <td className="px-4 py-2">{detail.profession || '-'}</td>
                   <td className="px-4 py-2">
-                    <Badge variant="outline">{detail.type_bail}</Badge>
+                    <Badge>{detail.type_bail}</Badge>
                   </td>
                   <td className="px-4 py-2 text-right">
                     {detail.duree_bail ? `${detail.duree_bail} mois` : '-'}
