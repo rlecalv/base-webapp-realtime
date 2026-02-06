@@ -109,7 +109,7 @@ export default function ActifForm({
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} size="large">
+    <Modal isOpen={isOpen} onClose={onClose} title={title} size="xl">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Informations générales */}
         <Card className="p-4">

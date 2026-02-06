@@ -92,7 +92,7 @@ export default function DetailPatrimoinePage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <LoadingSpinner size="large" />
+        <LoadingSpinner size="xl" />
       </div>
     );
   }

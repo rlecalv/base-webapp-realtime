@@ -110,7 +110,7 @@ export default function LocataireForm({
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title} size="large">
+    <Modal isOpen={isOpen} onClose={onClose} title={title} size="xl">
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Type et identité */}
         <Card className="p-4">
