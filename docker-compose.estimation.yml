@@ -24,7 +24,8 @@ services:
       - "8001:8001"
     networks:
       - estimation-network
-      - horizon-network  # Réseau partagé avec Horizon pour accès warehouse
+      - horizon-network
+      - traefik-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
       interval: 30s
@@ -32,6 +33,7 @@ services:
       retries: 3
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik-network"
       # API backend
       - "traefik.http.routers.estimation-api.rule=(Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`)) && PathPrefix(`/api`)"
       - "traefik.http.routers.estimation-api.entrypoints=websecure"
@@ -54,6 +56,7 @@ services:
       - estimation-backend
     networks:
       - estimation-network
+      - traefik-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
@@ -61,6 +64,7 @@ services:
       retries: 3
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik-network"
       # Frontend
       - "traefik.http.routers.estimation-front.rule=Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`)"
       - "traefik.http.routers.estimation-front.entrypoints=websecure"
@@ -88,7 +92,10 @@ networks:
     driver: bridge
   horizon-network:
     external: true
-    name: horizon_network  # Réseau existant Horizon
+    name: horizon_network
+  traefik-network:
+    external: true
+    name: traefik-network
 
 volumes:
   redis_data:
