@@ -34,22 +34,28 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-network"
-      # API backend
+      # API backend - HTTPS
       - "traefik.http.routers.estimation-api.rule=(Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`) || Host(`estimermonimmeuble.com`) || Host(`www.estimermonimmeuble.com`)) && PathPrefix(`/api`)"
       - "traefik.http.routers.estimation-api.entrypoints=websecure"
       - "traefik.http.routers.estimation-api.tls.certresolver=letsencrypt"
       - "traefik.http.services.estimation-api.loadbalancer.server.port=8001"
+      # API backend - HTTP redirect
+      - "traefik.http.routers.estimation-api-http.rule=(Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`) || Host(`estimermonimmeuble.com`) || Host(`www.estimermonimmeuble.com`)) && PathPrefix(`/api`)"
+      - "traefik.http.routers.estimation-api-http.entrypoints=web"
+      - "traefik.http.routers.estimation-api-http.middlewares=redirect-to-https@file"
 
   # Frontend Next.js
   estimation-frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: https://estimermonimmeuble.fr
     container_name: estimation_frontend
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=https://vendremonimmeuble.fr
+      - NEXT_PUBLIC_API_URL=https://estimermonimmeuble.fr
     ports:
       - "3001:3000"
     depends_on:
@@ -65,11 +71,15 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-network"
-      # Frontend
+      # Frontend - HTTPS
       - "traefik.http.routers.estimation-front.rule=Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`) || Host(`estimermonimmeuble.com`) || Host(`www.estimermonimmeuble.com`)"
       - "traefik.http.routers.estimation-front.entrypoints=websecure"
       - "traefik.http.routers.estimation-front.tls.certresolver=letsencrypt"
       - "traefik.http.services.estimation-front.loadbalancer.server.port=3000"
+      # Frontend - HTTP redirect
+      - "traefik.http.routers.estimation-front-http.rule=Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`) || Host(`estimermonimmeuble.com`) || Host(`www.estimermonimmeuble.com`)"
+      - "traefik.http.routers.estimation-front-http.entrypoints=web"
+      - "traefik.http.routers.estimation-front-http.middlewares=redirect-to-https@file"
 
   # Redis (cache)
   redis:

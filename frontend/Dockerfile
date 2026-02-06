@@ -36,8 +36,10 @@ WORKDIR /app
 COPY --chown=nextjs:nodejs . .
 
 # Variables d'environnement pour la build
+ARG NEXT_PUBLIC_API_URL=http://localhost:8001
 ENV NEXT_TELEMETRY_DISABLED=1 \
-    NODE_ENV=production
+    NODE_ENV=production \
+    NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 # Optimiser la build Next.js
 RUN npm run build

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { searchAddresses, IGNAddress } from '@/lib/ignApi';
-import { MapPinIcon } from '@heroicons/react/24/outline';
+import { MapPin, Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AddressAutocompleteProps {
   value: string;
@@ -12,45 +13,41 @@ interface AddressAutocompleteProps {
   label?: string;
   error?: string;
   helpText?: string;
+  className?: string;
 }
 
 export function AddressAutocomplete({
   value,
   onChange,
-  placeholder = 'Ex: 10 rue de la Paix',
+  placeholder = 'Ex: 10 rue de la Paix, Paris',
   required = false,
   label,
   error,
   helpText,
+  className,
 }: AddressAutocompleteProps) {
   const [query, setQuery] = useState(value);
   const [suggestions, setSuggestions] = useState<IGNAddress[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setQuery(value); }, [value]);
 
   useEffect(() => {
-    setQuery(value);
-  }, [value]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
       }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
     };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newQuery = e.target.value;
     setQuery(newQuery);
-    onChange('', '', ''); // Reset
+    onChange('', '', '');
 
     if (newQuery.length >= 3) {
       setIsLoading(true);
@@ -71,63 +68,51 @@ export function AddressAutocomplete({
       address.label,
       address.postcode,
       address.city,
-      address.geometry.coordinates[1], // latitude
-      address.geometry.coordinates[0]  // longitude
+      address.geometry.coordinates[1],
+      address.geometry.coordinates[0]
     );
   };
 
   return (
-    <div ref={wrapperRef} className="relative">
+    <div ref={wrapperRef} className={cn('relative', className)}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {label} {required && <span className="text-red-500">*</span>}
+        <label className="block text-sm font-medium text-foreground mb-1.5">
+          {label} {required && <span className="text-destructive">*</span>}
         </label>
       )}
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <MapPinIcon className="h-5 w-5 text-gray-400" />
-        </div>
+        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
         <input
-          ref={inputRef}
           type="text"
           value={query}
           onChange={handleInputChange}
-          onFocus={() => {
-            if (suggestions.length > 0) {
-              setShowSuggestions(true);
-            }
-          }}
+          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           placeholder={placeholder}
           required={required}
-          className={`block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-            error ? 'border-red-500' : 'border-gray-300'
-          }`}
+          className={cn(
+            'flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+            error && 'border-destructive'
+          )}
         />
         {isLoading && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-          </div>
+          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 size-4 animate-spin text-muted-foreground" />
         )}
       </div>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-auto">
           {suggestions.map((suggestion, index) => (
             <button
               key={index}
               type="button"
               onClick={() => handleSelect(suggestion)}
-              className="w-full text-left px-4 py-3 hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors"
+              className="w-full text-left px-3 py-2.5 hover:bg-accent focus:bg-accent focus:outline-none transition-colors"
             >
-              <div className="flex items-start">
-                <MapPinIcon className="h-5 w-5 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900 truncate">
-                    {suggestion.label}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {suggestion.postcode} {suggestion.city}
-                  </div>
+              <div className="flex items-start gap-2">
+                <MapPin className="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">{suggestion.label}</div>
+                  <div className="text-xs text-muted-foreground">{suggestion.postcode} {suggestion.city}</div>
                 </div>
               </div>
             </button>
@@ -135,13 +120,8 @@ export function AddressAutocomplete({
         </div>
       )}
 
-      {helpText && !error && (
-        <p className="mt-2 text-sm text-gray-500">{helpText}</p>
-      )}
-      {error && (
-        <p className="mt-2 text-sm text-red-600">{error}</p>
-      )}
+      {helpText && !error && <p className="mt-1.5 text-xs text-muted-foreground">{helpText}</p>}
+      {error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}
     </div>
   );
 }
-

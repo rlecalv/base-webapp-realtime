@@ -1,22 +1,18 @@
 /** @type {import('next').NextConfig} */
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:8000';
+// Backend Node.js (patrimoine) - utilisé pour le rewrite proxy
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 
 const nextConfig = {
   output: 'standalone',
   serverExternalPackages: [],
-  env: {
-    NEXT_PUBLIC_API_URL: API_URL,
-    NEXT_PUBLIC_SOCKET_URL: SOCKET_URL,
-  },
   eslint: {
-    ignoreDuringBuilds: true, // Ignorer les erreurs ESLint pendant le build pour le dev
+    ignoreDuringBuilds: true,
   },
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: `${API_URL}/api/:path*`,
+        destination: `${BACKEND_URL}/api/:path*`,
       },
     ];
   },
