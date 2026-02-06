@@ -19,10 +19,12 @@ export function ActionButton({
     ? 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200'
     : 'border-blue-200 text-blue-700 hover:bg-blue-50';
 
+  const buttonVariant = variant === 'primary' ? 'default' : 'outline';
+
   return (
     <Button 
-      variant={variant}
-      size={size}
+      variant={buttonVariant}
+      size={size === 'md' ? 'default' : size}
       onClick={onClick}
       className={`${baseClasses} ${className}`}
     >
