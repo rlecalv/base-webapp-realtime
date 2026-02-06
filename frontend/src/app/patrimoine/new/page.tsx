@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { FormInput } from '@/components/ui/FormInput';
 import PatrimoineLayout from '@/components/layouts/PatrimoineLayout';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import toast from 'react-hot-toast';
 
 interface ActifFormData {
@@ -41,7 +42,7 @@ const typesBien = [
   'Autre'
 ];
 
-export default function NewActifPage() {
+function NewActifPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const societeId = searchParams.get('societe');
@@ -388,5 +389,19 @@ export default function NewActifPage() {
         </form>
       </div>
     </PatrimoineLayout>
+  );
+}
+
+export default function NewActifPage() {
+  return (
+    <Suspense fallback={
+      <PatrimoineLayout>
+        <div className="flex justify-center items-center min-h-[400px]">
+          <LoadingSpinner size="xl" />
+        </div>
+      </PatrimoineLayout>
+    }>
+      <NewActifPageContent />
+    </Suspense>
   );
 }
