@@ -19,7 +19,7 @@ services:
       - ESTIMATION_WAREHOUSE_USER=${WAREHOUSE_USER:-postgres}
       - ESTIMATION_WAREHOUSE_PASSWORD=${WAREHOUSE_PASSWORD:-postgres}
       - ESTIMATION_REDIS_URL=redis://redis:6379/1
-      - ESTIMATION_CORS_ORIGINS=http://localhost:3000,https://vendremonimmeuble.fr,https://www.vendremonimmeuble.fr,https://estimermonimmeuble.fr,https://www.estimermonimmeuble.fr
+      - ESTIMATION_CORS_ORIGINS=http://localhost:3000,https://vendremonimmeuble.fr,https://www.vendremonimmeuble.fr,https://estimermonimmeuble.fr,https://www.estimermonimmeuble.fr,https://estimermonimmeuble.com,https://www.estimermonimmeuble.com
     ports:
       - "8001:8001"
     networks:
@@ -35,7 +35,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-network"
       # API backend
-      - "traefik.http.routers.estimation-api.rule=(Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`)) && PathPrefix(`/api`)"
+      - "traefik.http.routers.estimation-api.rule=(Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`) || Host(`estimermonimmeuble.com`) || Host(`www.estimermonimmeuble.com`)) && PathPrefix(`/api`)"
       - "traefik.http.routers.estimation-api.entrypoints=websecure"
       - "traefik.http.routers.estimation-api.tls.certresolver=letsencrypt"
       - "traefik.http.services.estimation-api.loadbalancer.server.port=8001"
@@ -66,7 +66,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-network"
       # Frontend
-      - "traefik.http.routers.estimation-front.rule=Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`)"
+      - "traefik.http.routers.estimation-front.rule=Host(`vendremonimmeuble.fr`) || Host(`www.vendremonimmeuble.fr`) || Host(`estimermonimmeuble.fr`) || Host(`www.estimermonimmeuble.fr`) || Host(`estimermonimmeuble.com`) || Host(`www.estimermonimmeuble.com`)"
       - "traefik.http.routers.estimation-front.entrypoints=websecure"
       - "traefik.http.routers.estimation-front.tls.certresolver=letsencrypt"
       - "traefik.http.services.estimation-front.loadbalancer.server.port=3000"
